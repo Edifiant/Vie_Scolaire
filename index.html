@@ -494,6 +494,12 @@
     <div class="form-card no-print">
         <div class="ai-badge">Tâche générée automatiquement</div>
 
+        <div class="form-group" style="margin-bottom:20px; padding:16px; background:#fdf6ec; border:1.5px solid #e6c87a; border-radius:6px;">
+            <label style="color:#8a6200;">🔑 Clé API Anthropic</label>
+            <input type="password" id="apiKey" placeholder="sk-ant-..." style="font-family:monospace; letter-spacing:1px;">
+            <div style="margin-top:6px; font-size:11px; color:#999;">Conservée en mémoire le temps de la session — jamais envoyée ailleurs que vers api.anthropic.com</div>
+        </div>
+
         <div class="form-grid">
             <div class="form-group">
                 <label>Nom & Prénom de l'élève</label>
@@ -626,7 +632,7 @@
             </div>
         </div>
 
-        <div id="errorBanner" style="display:none; background:#fdf0f0; border:1.5px solid #c0392b; border-radius:4px; padding:12px 16px; margin-top:16px; font-size:13px; color:#c0392b; font-family:monospace;"></div>
+        <div id="errorBanner" style="display:none; background:#fdf0f0; border:1.5px solid #c0392b; border-radius:4px; padding:12px 16px; margin-top:16px; font-size:12px; color:#c0392b; font-family:monospace;"></div>
 
         <div class="signatures">
             <div class="sig-box">
@@ -720,6 +726,15 @@
         document.getElementById('printArea').style.display = 'block';
         document.getElementById('printArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
+        // Récupération de la clé API
+        const apiKey = document.getElementById('apiKey').value.trim();
+        if (!apiKey) {
+            alert('Veuillez saisir votre clé API Anthropic avant de générer la fiche.');
+            btn.disabled = false;
+            btn.classList.remove('loading');
+            return;
+        }
+
         // Ancres thématiques par motif
         const motifAnchors = {
             "Bavardages / Perturbation": "Le bavardage a interrompu le cours et volé du temps de concentration au groupe. La tâche doit quantifier ou matérialiser cet impact collectif.",
@@ -757,7 +772,7 @@ Génère 3 consignes qui partent toutes de cette ancre. Si quelqu'un lit la fich
 Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
 
 {
-  "intro1": "Consigne d'analyse (section 1) : demande à l'élève de décrire précisément ce qui s'est passé en lien direct avec l'ancre — le moment exact du dérapage, ce qu'ont ressenti les personnes impactées. Pas de généralité. Tutoyement. 1-2 phrases.",
+  "intro1": "Consigne d'analyse : demande à l'élève de décrire précisément ce qui s'est passé en lien direct avec l'ancre — le moment exact du dérapage, ce qu'ont ressenti les personnes impactées. Pas de généralité. Tutoyement. 1-2 phrases.",
   "intro2": "1 phrase d'amorce annonçant la tâche créative.",
   "task": "Tâche créative ancrée dans '${motif}' — commence par une situation concrète liée au motif, puis utilise un format original : calcul d'impact chiffré, réécriture de scène avec un seul choix différent, micro-interview fictive 3 questions/réponses, lettre à la personne impactée, plaidoyer puis démontage honnête, mise en perspective dans un métier lié à ${subject}. Impossible à recycler pour un autre motif. Tutoyement. 4-6 phrases.",
   "intro3": "Question d'engagement ultra-précise sur CE motif — ex: 'La prochaine fois que tu sens l'envie de [action liée au motif], que feras-tu exactement dans les 3 secondes qui suivent ?' Tutoyement. 1-2 phrases."
@@ -768,6 +783,8 @@ Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    "x-api-key": apiKey,
+                    "anthropic-version": "2023-06-01",
                     "anthropic-dangerous-direct-browser-access": "true"
                 },
                 body: JSON.stringify({
@@ -777,7 +794,6 @@ Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
                 })
             });
 
-            // Afficher l'erreur HTTP si la requête échoue
             if (!response.ok) {
                 const errBody = await response.text();
                 throw new Error(`HTTP ${response.status} — ${errBody}`);
@@ -791,7 +807,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
             try {
                 parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
             } catch (jsonErr) {
-                throw new Error(`JSON invalide : ${raw.slice(0, 200)}`);
+                throw new Error(`JSON invalide reçu : ${raw.slice(0, 200)}`);
             }
 
             document.getElementById('outIntro1').textContent = parsed.intro1 ?? '';
@@ -800,10 +816,8 @@ Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
             document.getElementById('outIntro3').textContent = parsed.intro3 ?? '';
 
         } catch (e) {
-            // Afficher l'erreur réelle dans la bannière (visible sur la fiche, masquée à l'impression)
             errorBanner.style.display = 'block';
             errorBanner.textContent = '⚠ Erreur API : ' + e.message;
-            // Textes de secours neutres
             document.getElementById('outIntro1').textContent = "Décris précisément le moment exact où tu as fait le mauvais choix, et ce que ressentaient les personnes autour de toi :";
             document.getElementById('outIntro2').textContent = "Voici un exercice pour mesurer l'impact de ce qui s'est passé :";
             document.getElementById('outTask').textContent   = "Réécris la scène depuis le début en changeant une seule décision clé. Décris ce qui aurait été différent pour toi et pour les autres.";
