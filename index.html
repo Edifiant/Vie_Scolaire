@@ -718,24 +718,25 @@
         document.getElementById('printArea').style.display = 'block';
         document.getElementById('printArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        // Ancres thématiques par motif — garantissent que la tâche reste collée au comportement
+        // Ancres thématiques par motif
         const motifAnchors = {
             "Bavardages / Perturbation": "Le bavardage a interrompu le cours et volé du temps de concentration au groupe. La tâche doit quantifier ou matérialiser cet impact collectif.",
             "Insolence / Manque de respect": "Des mots blessants ou un ton irrespectueux ont été utilisés envers un adulte. La tâche doit travailler la reformulation, la puissance des mots et la relation d'autorité.",
             "Oubli de matériel répété": "L'élève arrive sans le matériel nécessaire, bloquant son propre apprentissage. La tâche doit produire un outil concret d'organisation personnelle.",
             "Usage du téléphone": "Le téléphone a été utilisé en classe malgré l'interdiction. La tâche doit explorer pourquoi cette règle existe et ce que l'élève rate quand il décroche.",
             "Refus de travail": "L'élève a refusé de s'engager dans l'activité proposée. La tâche doit connecter ce refus à ses conséquences réelles sur ses apprentissages et son avenir.",
-            "Dégradation / Manque de soin": "Du matériel ou un espace collectif a été abîmé ou mal traité. La tâche doit rendre visible le travail et le coût invisible derrière les objets du quotidien scolaire.",
-            "Retard injustifié": "L'élève est arrivé en retard, perturbant la classe et perdant du contenu. La tâche doit explorer la ponctualité comme compétence sociale et professionnelle.",
+            "Dégradation / Manque de soin": "Du matériel ou un espace collectif a été abîmé. La tâche doit rendre visible le travail et le coût invisible derrière les objets du quotidien scolaire.",
+            "Retard injustifié": "L'élève est arrivé en retard, perturbant la classe. La tâche doit explorer la ponctualité comme compétence sociale et professionnelle.",
             "Non-respect des règles de sécurité": "Un comportement dangereux a mis en risque l'élève ou ses camarades. La tâche doit visualiser concrètement les conséquences possibles.",
-            "Triche / Plagiat": "L'élève a trompé l'évaluation en s'appropriant un travail qui n'est pas le sien. La tâche doit travailler sur la confiance, l'intégrité intellectuelle et ce qu'on perd vraiment en trichant.",
-            "Violence verbale envers un camarade": "Des propos blessants ont été adressés à un pair. La tâche doit se placer du côté de la victime et travailler l'impact des mots sur l'autre.",
-            "Comportement perturbateur en EPS": "Le comportement a nui à la sécurité ou au bon déroulement de l'activité sportive collective. La tâche doit lier les règles du sport aux règles de vie.",
-            "Refus d'obtempérer": "L'élève a ignoré ou contesté ouvertement une consigne d'adulte. La tâche doit explorer la différence entre contester intelligemment et refuser par principe."
+            "Triche / Plagiat": "L'élève a trompé l'évaluation. La tâche doit travailler sur l'intégrité intellectuelle et ce qu'on perd vraiment en trichant.",
+            "Violence verbale envers un camarade": "Des propos blessants ont été adressés à un pair. La tâche doit se placer du côté de la victime et travailler l'impact des mots.",
+            "Comportement perturbateur en EPS": "Le comportement a nui à la sécurité ou au bon déroulement de l'activité collective. La tâche doit lier les règles du sport aux règles de vie.",
+            "Refus d'obtempérer": "L'élève a ignoré une consigne d'adulte. La tâche doit explorer la différence entre contester intelligemment et refuser par principe."
         };
 
-        const anchor = motifAnchors[motif] || `Le comportement (${motif}) a eu un impact sur le cadre d'apprentissage collectif. La tâche doit en partir directement.`;
+        const anchor = motifAnchors[motif] || `Le comportement (${motif}) a eu un impact sur le cadre d'apprentissage. La tâche doit en partir directement.`;
 
+        // Call Claude API
         const prompt = `Tu es un éducateur spécialisé en sanctions réparatrices dans un collège français.
 
 INCIDENT :
@@ -744,27 +745,27 @@ INCIDENT :
 - Motif : ${motif}
 ${context ? `- Contexte précis : ${context}` : ''}
 
-ANCRE THÉMATIQUE (point de départ obligatoire de toutes tes consignes) :
+ANCRE THÉMATIQUE (point de départ obligatoire) :
 ${anchor}
 
-Ta mission : générer 3 consignes qui PARTENT TOUTES de cette ancre thématique. Chaque consigne doit être immédiatement reconnaissable comme liée à "${motif}". Si quelqu'un lit la fiche sans voir le motif, il doit pouvoir le deviner.
+Génère 3 consignes qui partent toutes de cette ancre. Si quelqu'un lit la fiche sans voir le motif, il doit pouvoir le deviner.
 
 Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
 
 {
-  "intro1": "Consigne d'analyse (section 1) : demande à l'élève de décrire précisément ce qui s'est passé en lien direct avec l'ancre — identifier le moment exact du dérapage, ce qu'il a ressenti, ce qu'ont ressenti les autres. Pas de généralité. Tutoyement. 1-2 phrases.",
-
-  "intro2": "1 phrase d'amorce qui introduit la tâche créative (section 2). Doit annoncer le format choisi sans le nommer explicitement.",
-
-  "task": "Tâche créative ancrée dans '${motif}' — RÈGLE ABSOLUE : commence par décrire précisément une situation concrète liée au motif, puis déploie un format original parmi : calcul d'impact chiffré sur le groupe, réécriture de la scène avec un seul choix différent, micro-interview fictive (3 questions sur CET incident), lettre à la personne impactée par ce comportement précis, plaidoyer : meilleure défense possible puis démontage honnête, mise en perspective professionnelle (comment ce comportement jouerait dans un métier précis lié à ${subject}). Lier à '${subject}' si naturel. Tutoyement. 4-6 phrases. La tâche doit être impossible à recycler pour un autre motif.",
-
-  "intro3": "Consigne d'engagement (section 3) : question ultra-précise sur CE motif — pas 'comment vas-tu t'améliorer' mais une question ancrée comme 'La prochaine fois que tu sens l'envie de [action liée au motif], que feras-tu exactement dans les 3 secondes qui suivent ?' ou 'Quelle règle personnelle vas-tu te donner concernant [élément central du motif] ?'. Tutoyement. 1-2 phrases."
+  "intro1": "Consigne d'analyse : demande à l'élève de décrire précisément ce qui s'est passé en lien avec l'ancre — identifier le moment exact du dérapage, ce qu'ont ressenti les personnes impactées. Pas de généralité. Tutoyement. 1-2 phrases.",
+  "intro2": "1 phrase d'amorce qui introduit la tâche créative sans la dévoiler entièrement.",
+  "task": "Tâche créative ancrée dans '${motif}' — commence par une situation concrète liée au motif, puis déploie un format original parmi : calcul d'impact chiffré, réécriture de scène avec un seul choix différent, micro-interview fictive sur CET incident, lettre à la personne impactée, plaidoyer puis démontage honnête, mise en perspective dans un métier lié à ${subject}. La tâche doit être impossible à recycler pour un autre motif. Tutoyement. 4-6 phrases.",
+  "intro3": "Question d'engagement ultra-précise sur CE motif — ex: 'La prochaine fois que tu sens l'envie de [action liée au motif], que feras-tu exactement dans les 3 secondes qui suivent ?' Tutoyement. 1-2 phrases."
 }`;
 
         try {
             const response = await fetch("https://api.anthropic.com/v1/messages", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "anthropic-dangerous-direct-browser-access": "true"
+                },
                 body: JSON.stringify({
                     model: "claude-sonnet-4-20250514",
                     max_tokens: 1200,
