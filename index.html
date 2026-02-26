@@ -716,23 +716,35 @@
         document.getElementById('printArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         // Call Claude API
-        const prompt = `Tu es un conseiller pédagogique dans un collège français. Génère une tâche de réflexion pédagogique personnalisée pour la fiche de sanction d'un élève.
+        const prompt = `Tu es un éducateur spécialisé dans les sanctions réparatrices et la pédagogie positive en collège français. Ta mission : créer une tâche de réflexion ORIGINALE, SURPRENANTE et MÉMORABLE — jamais une simple rédaction ou liste de règles.
 
-Informations :
-- Élève : ${name}
-- Niveau : ${level}
+CONTEXTE DE L'INCIDENT :
+- Élève : ${name}, niveau ${level}
 - Matière : ${subject}
-- Motif de la sanction : ${motif}
-${context ? `- Contexte de l'incident : ${context}` : ''}
+- Motif : ${motif}
+${context ? `- Détails : ${context}` : ''}
 
-Génère UNE tâche pédagogique concrète, adaptée au niveau de l'élève, qui :
-1. Est directement liée au motif de la sanction
-2. Demande une réflexion active (pas juste recopier)
-3. Est réalisable en 15-20 minutes à l'écrit
-4. Est formulée directement à l'élève (tutoyement)
-5. Fait appel à sa réflexion personnelle
+FORMATS CRÉATIFS POSSIBLES (choisis-en UN seul, de façon inattendue et pertinente) :
+• Renversement de rôle : l'élève se met dans la peau du prof, de la victime, du personnage historique, du personnage de roman étudié en classe…
+• Lettre à un destinataire inhabituel : à son futur moi dans 10 ans, à un élève imaginaire qui ferait la même chose, à un personnage fictif ou historique
+• Expérience de pensée chiffrée : calcul de l'impact collectif du comportement (temps volé, énergie dépensée, coût fictif…)
+• Micro-interview fictive : 3 questions qu'un journaliste lui poserait sur l'incident + ses vraies réponses
+• Schéma causal : dessiner/décrire la chaîne d'événements "avant → pendant → après" et ce qu'il aurait pu couper
+• Réécriture de scénario : réécrire la scène en changeant UNE seule décision clé
+• Plaidoyer contradictoire : défendre d'abord son comportement (meilleure excuse possible), puis le démolir honnêtement
+• Analogie sportive, musicale ou culinaire : trouver une métaphore dans un domaine qu'il aime pour expliquer pourquoi les règles existent
+• Invention d'une règle : proposer une règle de classe qui résoudrait le problème, avec ses exceptions et sanctions
+• Défi 48h : décrire précisément ce qu'il va faire différemment pendant 2 jours et comment il va le vérifier lui-même
 
-Réponds UNIQUEMENT avec le texte de la tâche, sans introduction ni commentaire. 3-5 phrases maximum.`;
+CONTRAINTES ABSOLUES :
+- La tâche doit être DIRECTEMENT liée à "${motif}" ET à la matière "${subject}" si possible
+- Adaptée au niveau ${level} (vocabulaire, complexité)
+- Tutoyement, ton direct et bienveillant
+- Réalisable en 15-20 min à l'écrit sur la fiche
+- JAMAIS : "recopie le règlement", "fais une liste de bonnes résolutions", "rédige un texte sur le respect"
+- JAMAIS de titre ou d'introduction — commence directement par la consigne
+
+Réponds UNIQUEMENT avec le texte de la tâche (4-6 phrases). Aucun commentaire avant ou après.`;
 
         try {
             const response = await fetch("https://api.anthropic.com/v1/messages", {
