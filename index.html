@@ -626,6 +626,8 @@
             </div>
         </div>
 
+        <div id="errorBanner" style="display:none; background:#fdf0f0; border:1.5px solid #c0392b; border-radius:4px; padding:12px 16px; margin-top:16px; font-size:13px; color:#c0392b; font-family:monospace;"></div>
+
         <div class="signatures">
             <div class="sig-box">
                 <div class="sig-area"></div>
@@ -733,8 +735,10 @@
             "Comportement perturbateur en EPS": "Le comportement a nui à la sécurité ou au bon déroulement de l'activité collective. La tâche doit lier les règles du sport aux règles de vie.",
             "Refus d'obtempérer": "L'élève a ignoré une consigne d'adulte. La tâche doit explorer la différence entre contester intelligemment et refuser par principe."
         };
-
         const anchor = motifAnchors[motif] || `Le comportement (${motif}) a eu un impact sur le cadre d'apprentissage. La tâche doit en partir directement.`;
+
+        const errorBanner = document.getElementById('errorBanner');
+        errorBanner.style.display = 'none';
 
         // Call Claude API
         const prompt = `Tu es un éducateur spécialisé en sanctions réparatrices dans un collège français.
@@ -745,7 +749,7 @@ INCIDENT :
 - Motif : ${motif}
 ${context ? `- Contexte précis : ${context}` : ''}
 
-ANCRE THÉMATIQUE (point de départ obligatoire) :
+ANCRE THÉMATIQUE (point de départ obligatoire de toutes tes consignes) :
 ${anchor}
 
 Génère 3 consignes qui partent toutes de cette ancre. Si quelqu'un lit la fiche sans voir le motif, il doit pouvoir le deviner.
@@ -753,9 +757,9 @@ Génère 3 consignes qui partent toutes de cette ancre. Si quelqu'un lit la fich
 Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
 
 {
-  "intro1": "Consigne d'analyse : demande à l'élève de décrire précisément ce qui s'est passé en lien avec l'ancre — identifier le moment exact du dérapage, ce qu'ont ressenti les personnes impactées. Pas de généralité. Tutoyement. 1-2 phrases.",
-  "intro2": "1 phrase d'amorce qui introduit la tâche créative sans la dévoiler entièrement.",
-  "task": "Tâche créative ancrée dans '${motif}' — commence par une situation concrète liée au motif, puis déploie un format original parmi : calcul d'impact chiffré, réécriture de scène avec un seul choix différent, micro-interview fictive sur CET incident, lettre à la personne impactée, plaidoyer puis démontage honnête, mise en perspective dans un métier lié à ${subject}. La tâche doit être impossible à recycler pour un autre motif. Tutoyement. 4-6 phrases.",
+  "intro1": "Consigne d'analyse (section 1) : demande à l'élève de décrire précisément ce qui s'est passé en lien direct avec l'ancre — le moment exact du dérapage, ce qu'ont ressenti les personnes impactées. Pas de généralité. Tutoyement. 1-2 phrases.",
+  "intro2": "1 phrase d'amorce annonçant la tâche créative.",
+  "task": "Tâche créative ancrée dans '${motif}' — commence par une situation concrète liée au motif, puis utilise un format original : calcul d'impact chiffré, réécriture de scène avec un seul choix différent, micro-interview fictive 3 questions/réponses, lettre à la personne impactée, plaidoyer puis démontage honnête, mise en perspective dans un métier lié à ${subject}. Impossible à recycler pour un autre motif. Tutoyement. 4-6 phrases.",
   "intro3": "Question d'engagement ultra-précise sur CE motif — ex: 'La prochaine fois que tu sens l'envie de [action liée au motif], que feras-tu exactement dans les 3 secondes qui suivent ?' Tutoyement. 1-2 phrases."
 }`;
 
@@ -773,19 +777,36 @@ Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
                 })
             });
 
+            // Afficher l'erreur HTTP si la requête échoue
+            if (!response.ok) {
+                const errBody = await response.text();
+                throw new Error(`HTTP ${response.status} — ${errBody}`);
+            }
+
             const data = await response.json();
             const raw = data.content?.[0]?.text?.trim() ?? null;
-            if (!raw) throw new Error('empty');
+            if (!raw) throw new Error('Réponse vide de l\'API');
 
-            const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+            let parsed;
+            try {
+                parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+            } catch (jsonErr) {
+                throw new Error(`JSON invalide : ${raw.slice(0, 200)}`);
+            }
+
             document.getElementById('outIntro1').textContent = parsed.intro1 ?? '';
             document.getElementById('outIntro2').textContent = parsed.intro2 ?? '';
             document.getElementById('outTask').textContent   = parsed.task   ?? '';
             document.getElementById('outIntro3').textContent = parsed.intro3 ?? '';
+
         } catch (e) {
-            document.getElementById('outIntro1').textContent = "Décris précisément le moment exact où tu as fait le mauvais choix, et ce que ressentaient les personnes autour de toi à cet instant :";
-            document.getElementById('outIntro2').textContent = "Voici un exercice pour mesurer concrètement l'impact de ce qui s'est passé :";
-            document.getElementById('outTask').textContent   = "Réécris la scène depuis le début en changeant une seule décision clé. Décris ce qui aurait été différent pour toi, pour les autres présents, et pour la suite du cours.";
+            // Afficher l'erreur réelle dans la bannière (visible sur la fiche, masquée à l'impression)
+            errorBanner.style.display = 'block';
+            errorBanner.textContent = '⚠ Erreur API : ' + e.message;
+            // Textes de secours neutres
+            document.getElementById('outIntro1').textContent = "Décris précisément le moment exact où tu as fait le mauvais choix, et ce que ressentaient les personnes autour de toi :";
+            document.getElementById('outIntro2').textContent = "Voici un exercice pour mesurer l'impact de ce qui s'est passé :";
+            document.getElementById('outTask').textContent   = "Réécris la scène depuis le début en changeant une seule décision clé. Décris ce qui aurait été différent pour toi et pour les autres.";
             document.getElementById('outIntro3').textContent = "La prochaine fois que tu te retrouves dans une situation similaire, quelle règle personnelle précise vas-tu appliquer dans les premières secondes ?";
         }
 
