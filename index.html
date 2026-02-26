@@ -718,25 +718,48 @@
         document.getElementById('printArea').style.display = 'block';
         document.getElementById('printArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        // Call Claude API — génère les 3 sections en JSON
-        const prompt = `Tu es un éducateur spécialisé dans les sanctions réparatrices en collège français.
+        // Ancres thématiques par motif — garantissent que la tâche reste collée au comportement
+        const motifAnchors = {
+            "Bavardages / Perturbation": "Le bavardage a interrompu le cours et volé du temps de concentration au groupe. La tâche doit quantifier ou matérialiser cet impact collectif.",
+            "Insolence / Manque de respect": "Des mots blessants ou un ton irrespectueux ont été utilisés envers un adulte. La tâche doit travailler la reformulation, la puissance des mots et la relation d'autorité.",
+            "Oubli de matériel répété": "L'élève arrive sans le matériel nécessaire, bloquant son propre apprentissage. La tâche doit produire un outil concret d'organisation personnelle.",
+            "Usage du téléphone": "Le téléphone a été utilisé en classe malgré l'interdiction. La tâche doit explorer pourquoi cette règle existe et ce que l'élève rate quand il décroche.",
+            "Refus de travail": "L'élève a refusé de s'engager dans l'activité proposée. La tâche doit connecter ce refus à ses conséquences réelles sur ses apprentissages et son avenir.",
+            "Dégradation / Manque de soin": "Du matériel ou un espace collectif a été abîmé ou mal traité. La tâche doit rendre visible le travail et le coût invisible derrière les objets du quotidien scolaire.",
+            "Retard injustifié": "L'élève est arrivé en retard, perturbant la classe et perdant du contenu. La tâche doit explorer la ponctualité comme compétence sociale et professionnelle.",
+            "Non-respect des règles de sécurité": "Un comportement dangereux a mis en risque l'élève ou ses camarades. La tâche doit visualiser concrètement les conséquences possibles.",
+            "Triche / Plagiat": "L'élève a trompé l'évaluation en s'appropriant un travail qui n'est pas le sien. La tâche doit travailler sur la confiance, l'intégrité intellectuelle et ce qu'on perd vraiment en trichant.",
+            "Violence verbale envers un camarade": "Des propos blessants ont été adressés à un pair. La tâche doit se placer du côté de la victime et travailler l'impact des mots sur l'autre.",
+            "Comportement perturbateur en EPS": "Le comportement a nui à la sécurité ou au bon déroulement de l'activité sportive collective. La tâche doit lier les règles du sport aux règles de vie.",
+            "Refus d'obtempérer": "L'élève a ignoré ou contesté ouvertement une consigne d'adulte. La tâche doit explorer la différence entre contester intelligemment et refuser par principe."
+        };
 
-CONTEXTE :
-- Élève : ${name}, niveau ${level}
+        const anchor = motifAnchors[motif] || `Le comportement (${motif}) a eu un impact sur le cadre d'apprentissage collectif. La tâche doit en partir directement.`;
+
+        const prompt = `Tu es un éducateur spécialisé en sanctions réparatrices dans un collège français.
+
+INCIDENT :
+- Élève : ${name}, classe de ${level}
 - Matière : ${subject}
 - Motif : ${motif}
-${context ? `- Détails : ${context}` : ''}
+${context ? `- Contexte précis : ${context}` : ''}
 
-Génère les 3 consignes de la fiche, toutes originales et propres à ce cas. Réponds UNIQUEMENT en JSON strict, sans markdown ni texte autour :
+ANCRE THÉMATIQUE (point de départ obligatoire de toutes tes consignes) :
+${anchor}
+
+Ta mission : générer 3 consignes qui PARTENT TOUTES de cette ancre thématique. Chaque consigne doit être immédiatement reconnaissable comme liée à "${motif}". Si quelqu'un lit la fiche sans voir le motif, il doit pouvoir le deviner.
+
+Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
 
 {
-  "intro1": "Consigne section 1 : invite l'élève à analyser l'incident depuis un angle inattendu et spécifique — ex: identifier le tout premier mauvais choix dans la chaîne d'événements, se mettre dans la peau d'un témoin silencieux, comparer sa réaction à celle qu'il aurait conseillée à un ami. Tutoyement. 1-2 phrases directement liées à '${motif}'.",
-  "intro2": "1 phrase courte qui introduit la tâche créative sans répéter le motif mot pour mot.",
-  "task": "Tâche pédagogique originale : choisis UN format parmi — renversement de rôle (prof, victime, personnage du cours), plaidoyer contradictoire (meilleure excuse puis démontage honnête), réécriture de scénario avec un seul choix différent, micro-interview fictive 3 questions/réponses, calcul d'impact chiffré sur le groupe, lettre à un destinataire inattendu (futur soi dans 5 ans, personnage historique, camarade imaginaire), analogie sport/musique/cuisine pour expliquer la règle, invention d'une règle avec exceptions, défi comportemental 48h très précis. Lier à '${motif}' ET à '${subject}' si possible. Tutoyement. 4-6 phrases.",
-  "intro3": "Consigne section 3 : question concrète sur l'engagement, spécifique à CE motif. Exemples de formulations : 'Décris le signal intérieur que tu vas apprendre à reconnaître avant de…', 'Quel pacte précis passes-tu avec toi-même la prochaine fois que…', 'Cite une situation dans les 48h à venir où tu pourrais appliquer ce que tu viens de réaliser…'. Tutoyement. 1-2 phrases."
-}
+  "intro1": "Consigne d'analyse (section 1) : demande à l'élève de décrire précisément ce qui s'est passé en lien direct avec l'ancre — identifier le moment exact du dérapage, ce qu'il a ressenti, ce qu'ont ressenti les autres. Pas de généralité. Tutoyement. 1-2 phrases.",
 
-INTERDIT dans tous les champs : formules génériques sur le respect, recopie du règlement, listes de bonnes résolutions, tout ce qui pourrait s'appliquer mot pour mot à un autre élève.`;
+  "intro2": "1 phrase d'amorce qui introduit la tâche créative (section 2). Doit annoncer le format choisi sans le nommer explicitement.",
+
+  "task": "Tâche créative ancrée dans '${motif}' — RÈGLE ABSOLUE : commence par décrire précisément une situation concrète liée au motif, puis déploie un format original parmi : calcul d'impact chiffré sur le groupe, réécriture de la scène avec un seul choix différent, micro-interview fictive (3 questions sur CET incident), lettre à la personne impactée par ce comportement précis, plaidoyer : meilleure défense possible puis démontage honnête, mise en perspective professionnelle (comment ce comportement jouerait dans un métier précis lié à ${subject}). Lier à '${subject}' si naturel. Tutoyement. 4-6 phrases. La tâche doit être impossible à recycler pour un autre motif.",
+
+  "intro3": "Consigne d'engagement (section 3) : question ultra-précise sur CE motif — pas 'comment vas-tu t'améliorer' mais une question ancrée comme 'La prochaine fois que tu sens l'envie de [action liée au motif], que feras-tu exactement dans les 3 secondes qui suivent ?' ou 'Quelle règle personnelle vas-tu te donner concernant [élément central du motif] ?'. Tutoyement. 1-2 phrases."
+}`;
 
         try {
             const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -744,7 +767,7 @@ INTERDIT dans tous les champs : formules génériques sur le respect, recopie du
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     model: "claude-sonnet-4-20250514",
-                    max_tokens: 1000,
+                    max_tokens: 1200,
                     messages: [{ role: "user", content: prompt }]
                 })
             });
@@ -759,10 +782,10 @@ INTERDIT dans tous les champs : formules génériques sur le respect, recopie du
             document.getElementById('outTask').textContent   = parsed.task   ?? '';
             document.getElementById('outIntro3').textContent = parsed.intro3 ?? '';
         } catch (e) {
-            document.getElementById('outIntro1').textContent = "Identifie le moment exact dans la séquence d'événements où tu aurais pu faire un choix différent, et explique ce qui t'en a empêché :";
-            document.getElementById('outIntro2').textContent = "Voici un défi pour changer de perspective sur cet incident :";
-            document.getElementById('outTask').textContent   = "Réécris la scène depuis le début en changeant une seule décision clé. Décris ce qui aurait été différent pour toi et pour les autres.";
-            document.getElementById('outIntro3').textContent = "Décris précisément — en une ou deux phrases — l'action concrète que tu mettras en place dès demain pour que cela ne se reproduise pas :";
+            document.getElementById('outIntro1').textContent = "Décris précisément le moment exact où tu as fait le mauvais choix, et ce que ressentaient les personnes autour de toi à cet instant :";
+            document.getElementById('outIntro2').textContent = "Voici un exercice pour mesurer concrètement l'impact de ce qui s'est passé :";
+            document.getElementById('outTask').textContent   = "Réécris la scène depuis le début en changeant une seule décision clé. Décris ce qui aurait été différent pour toi, pour les autres présents, et pour la suite du cours.";
+            document.getElementById('outIntro3').textContent = "La prochaine fois que tu te retrouves dans une situation similaire, quelle règle personnelle précise vas-tu appliquer dans les premières secondes ?";
         }
 
         btn.disabled = false;
