@@ -3,840 +3,1108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fiche de réflexion pédagogique</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+    <title>Travaux Réparateurs · Générateur IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --ink: #1a1a2e;
-            --paper: #faf7f2;
-            --accent: #c0392b;
-            --gold: #b5860d;
-            --light-rule: #d9d0c3;
-            --panel-bg: #f2ede4;
+            --bg-deep: #0e2233;
+            --bg-card: rgba(255,255,255,0.07);
+            --accent: #5bc8f5;
+            --accent-warm: #ffb84d;
+            --accent-green: #5be5b0;
+            --accent-red: #ff6b6b;
+            --text-primary: #e8f4fa;
+            --text-muted: #7fb8d4;
+            --glass-border: rgba(255,255,255,0.12);
+            --card-bg: #f5fbff;
+            --card-shadow: 0 20px 40px -10px rgba(0,0,0,0.55);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Source Serif 4', Georgia, serif;
-            background: var(--ink);
+            background: var(--bg-deep);
             min-height: 100vh;
-            padding: 30px 20px;
-            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            padding: 1.5rem 1rem 3rem;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* Texture overlay */
-        body::before {
+        /* Background decorative blobs */
+        body::before, body::after {
             content: '';
             position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.18;
             pointer-events: none;
             z-index: 0;
         }
+        body::before {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, #1a6fa0, transparent 70%);
+            top: -200px; left: -200px;
+        }
+        body::after {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, #0a4a2e, transparent 70%);
+            bottom: -150px; right: -150px;
+        }
 
-        .app-wrapper {
+        .wrapper {
+            max-width: 1320px;
+            margin: 0 auto;
             position: relative;
             z-index: 1;
-            max-width: 860px;
-            margin: auto;
         }
 
-        /* ─── HEADER ─── */
-        .app-header {
-            text-align: center;
-            margin-bottom: 36px;
-            color: var(--paper);
+        /* HEADER */
+        .header {
+            margin-bottom: 2rem;
         }
 
-        .app-header .eyebrow {
-            font-size: 11px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: #8a8fa8;
-            margin-bottom: 12px;
+        .header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
         }
 
-        .app-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(28px, 5vw, 46px);
-            font-weight: 900;
-            line-height: 1.1;
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 800;
+            color: var(--text-primary);
             letter-spacing: -1px;
+            line-height: 1.1;
         }
 
-        .app-header h1 span {
-            color: var(--accent);
+        h1 .chip {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg-deep);
+            font-size: 0.75em;
+            font-weight: 700;
+            padding: 0.15em 0.8em;
+            border-radius: 40px;
+            vertical-align: middle;
+            margin-left: 0.4em;
+            letter-spacing: 0;
         }
 
-        /* ─── FORM PANEL ─── */
-        .form-card {
-            background: var(--paper);
-            border-radius: 4px;
-            padding: 36px;
-            margin-bottom: 24px;
+        .tagline {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            border-left: 3px solid var(--accent);
+            padding-left: 0.9rem;
+        }
+
+        /* TOGGLE AI */
+        .ai-toggle-zone {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: rgba(91,200,245,0.1);
+            border: 1px solid rgba(91,200,245,0.25);
+            border-radius: 50px;
+            padding: 0.5rem 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            white-space: nowrap;
+        }
+        .ai-toggle-zone:hover { background: rgba(91,200,245,0.18); }
+        .ai-toggle-zone .ai-icon { font-size: 1.2rem; }
+        .ai-label { color: var(--accent); font-size: 0.9rem; font-weight: 500; }
+
+        .toggle-pill {
+            width: 36px; height: 20px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50px;
             position: relative;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.8);
+            transition: background 0.2s;
+            flex-shrink: 0;
         }
-
-        .form-card::before {
+        .toggle-pill::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--gold));
+            width: 14px; height: 14px;
+            background: white;
+            border-radius: 50%;
+            top: 3px; left: 3px;
+            transition: transform 0.2s;
+        }
+        .toggle-pill.on { background: var(--accent); }
+        .toggle-pill.on::after { transform: translateX(16px); }
+
+        /* SELECTORS */
+        .selectors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .sel-group {
+            flex: 1 1 200px;
+            background: rgba(10, 30, 45, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 22px;
+            padding: 1.1rem 1.4rem;
         }
 
-        .form-group {
+        .sel-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 0.7rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.75rem 2.8rem 0.75rem 1.1rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #1e3b47;
+            background: #eaf6fd;
+            border: 2px solid #8fc9e3;
+            border-radius: 50px;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e3b47' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+            transition: all 0.2s;
+        }
+        select:hover { background-color: #fff; border-color: #b2e2fa; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        select:focus { border-color: var(--accent-warm); box-shadow: 0 0 0 3px rgba(255,184,77,0.25); }
+
+        /* CONTEXT PROMPT (AI mode) */
+        .context-zone {
+            margin-bottom: 1.8rem;
+            display: none;
+        }
+        .context-zone.visible { display: block; }
+        .context-zone label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--text-muted);
+            display: block;
+            margin-bottom: 0.6rem;
+        }
+        .context-zone textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: #1e3b47;
+            background: #eaf6fd;
+            border: 2px solid #8fc9e3;
+            border-radius: 18px;
+            resize: vertical;
+            min-height: 70px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .context-zone textarea:focus { border-color: var(--accent-warm); box-shadow: 0 0 0 3px rgba(255,184,77,0.25); }
+        .context-zone textarea::placeholder { color: #7fa8bb; }
+
+        /* CARDS */
+        .cards-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .carte {
+            flex: 1 1 300px;
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(180,220,240,0.8);
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            position: relative;
+            transition: transform 0.25s, box-shadow 0.25s;
+            overflow: hidden;
         }
+        .carte:hover { transform: translateY(-5px); box-shadow: 0 28px 50px -10px rgba(0,0,0,0.6); }
 
-        .form-group.full { grid-column: 1 / -1; }
+        /* Category color accents */
+        .carte.c1 { border-top: 4px solid #5bc8f5; }
+        .carte.c2 { border-top: 4px solid #5be5b0; }
+        .carte.c3 { border-top: 4px solid #ffb84d; }
 
-        label {
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: 2px;
+        /* Shimmer overlay for loading */
+        .carte.loading::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(91,200,245,0.15) 50%, transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite;
+            border-radius: inherit;
+            z-index: 10;
+        }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+        .cat-badge {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
             text-transform: uppercase;
-            color: #888;
+            letter-spacing: 1.5px;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            margin-bottom: 0.9rem;
+            align-self: flex-start;
+            border: none;
+        }
+        .c1 .cat-badge { background: #d4f0fb; color: #0a5a78; }
+        .c2 .cat-badge { background: #d0f7e8; color: #0a5a3c; }
+        .c3 .cat-badge { background: #ffeacc; color: #7a4200; }
+
+        .matiere-tag {
+            font-size: 0.8rem;
+            background: #ddf0f9;
+            color: #1e5e7a;
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            margin-bottom: 0.9rem;
+            font-weight: 600;
+            border: 1px solid #aad9ef;
+            display: inline-block;
+            align-self: flex-start;
         }
 
-        input, select, textarea {
-            font-family: 'Source Serif 4', serif;
-            font-size: 15px;
-            padding: 10px 14px;
-            border: 1.5px solid var(--light-rule);
-            border-radius: 3px;
-            background: #fff;
-            color: var(--ink);
-            transition: border-color 0.2s;
-            width: 100%;
+        .pun-text {
+            font-size: 1.05rem;
+            line-height: 1.55;
+            color: #143e4f;
+            font-weight: 500;
+            flex-grow: 1;
+            border-bottom: 2px dotted #b2d4e8;
+            padding-bottom: 1rem;
+            margin-bottom: 0.9rem;
+            min-height: 100px;
         }
 
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent);
+        .obj-box {
+            font-size: 0.88rem;
+            color: #1e6f8f;
+            background: #e3f2fa;
+            border-radius: 16px;
+            padding: 0.65rem 0.9rem;
+            border: 1px solid #b2e2fa;
+            margin-bottom: 0.9rem;
+            line-height: 1.4;
+        }
+        .obj-box strong { color: #0f475e; }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
-        textarea { resize: vertical; min-height: 80px; }
+        .duree-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: #ffd966;
+            color: #1e4a5f;
+            font-size: 0.82rem;
+            font-weight: 700;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+        }
 
-        .form-section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 13px;
-            letter-spacing: 1px;
-            color: var(--gold);
-            border-bottom: 1px solid var(--light-rule);
-            padding-bottom: 8px;
-            margin: 24px 0 16px;
-            grid-column: 1 / -1;
+        .card-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        .icon-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 1px solid #b2d4e8;
+            background: white;
+            color: #1e5a75;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+        .icon-btn:hover { background: #e3f2fa; border-color: #5bc8f5; transform: scale(1.1); }
+        .icon-btn.copied { background: #d0f7e8; border-color: #5be5b0; color: #0a5a3c; }
+
+        /* BUTTONS */
+        .actions-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            padding: 0.9rem 2.2rem;
+            border-radius: 60px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.18s;
+            box-shadow: 0 8px 20px -5px rgba(0,0,0,0.4);
         }
 
         .btn-generate {
             background: var(--accent);
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-family: 'Playfair Display', serif;
-            font-size: 17px;
-            font-weight: 700;
-            width: 100%;
-            margin-top: 24px;
-            transition: all 0.2s;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
+            color: var(--bg-deep);
+            border-bottom: 4px solid #2a9ac4;
         }
-
-        .btn-generate:hover:not(:disabled) {
-            background: #a93226;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(192,57,43,0.4);
-        }
-
-        .btn-generate:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-generate .spinner {
-            display: none;
-            width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
-        }
-
-        .btn-generate.loading .spinner { display: block; }
-        .btn-generate.loading .btn-text { display: none; }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ─── AI BADGE ─── */
-        .ai-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, #1a1a2e, #2d2d4e);
-            color: #a0a8cc;
-            font-size: 10px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-            border: 1px solid #3a3a5c;
-        }
-
-        .ai-badge::before {
-            content: '✦';
-            color: var(--gold);
-            font-size: 8px;
-        }
-
-        /* ─── PRINT AREA ─── */
-        #printArea {
-            display: none;
-            background: var(--paper);
-            border-radius: 4px;
-            padding: 48px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            position: relative;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        #printArea::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--gold));
-        }
-
-        .fiche-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 32px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--ink);
-        }
-
-        .fiche-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 11px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #888;
-        }
-
-        .fiche-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px;
-            font-weight: 900;
-            text-align: right;
-            letter-spacing: -0.5px;
-        }
-
-        .fiche-title small {
-            display: block;
-            font-family: 'Source Serif 4', serif;
-            font-size: 11px;
-            font-weight: 400;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #888;
-            margin-bottom: 4px;
-        }
-
-        .meta-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px 40px;
-            margin-bottom: 28px;
-            font-size: 14px;
-        }
-
-        .meta-item strong {
-            display: block;
-            font-size: 9px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #888;
-            margin-bottom: 2px;
-        }
-
-        .meta-value {
-            border-bottom: 1px solid var(--light-rule);
-            padding-bottom: 4px;
-        }
-
-        .section {
-            margin-top: 28px;
-        }
-
-        .section-label {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .section-num {
-            font-family: 'Playfair Display', serif;
-            font-size: 11px;
-            font-weight: 700;
-            background: var(--ink);
-            color: var(--paper);
-            width: 24px; height: 24px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .section-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--ink);
-        }
-
-        .section-intro {
-            font-size: 13px;
-            color: #555;
-            font-style: italic;
-            margin-bottom: 12px;
-            line-height: 1.6;
-        }
-
-        .task-block {
-            background: #fff;
-            border-left: 3px solid var(--accent);
-            padding: 16px 20px;
-            margin: 10px 0 16px;
-            font-size: 14px;
-            line-height: 1.7;
-            border-radius: 0 3px 3px 0;
-            position: relative;
-        }
-
-        .task-block .ai-tag {
-            position: absolute;
-            top: -10px; right: 12px;
-            background: var(--gold);
-            color: white;
-            font-size: 9px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 2px 8px;
-            border-radius: 10px;
-        }
-
-        .write-lines { margin-top: 8px; }
-        .write-line {
-            border-bottom: 1px dotted #bbb;
-            height: 28px;
-            margin-bottom: 2px;
-        }
-
-        .signatures {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-            margin-top: 48px;
-            padding-top: 20px;
-            border-top: 1px solid var(--light-rule);
-        }
-
-        .sig-box {
-            text-align: center;
-            font-size: 11px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: #888;
-        }
-
-        .sig-area {
-            height: 60px;
-            border-bottom: 1px solid var(--ink);
-            margin-bottom: 8px;
-        }
-
-        /* ─── ACTION BUTTONS ─── */
-        .action-row {
-            display: flex;
-            gap: 12px;
-            margin-top: 28px;
-            justify-content: flex-end;
-        }
-
-        .btn-action {
-            font-family: 'Source Serif 4', serif;
-            font-size: 13px;
-            padding: 10px 22px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 0.5px;
-            border: 1.5px solid;
-        }
+        .btn-generate:hover { background: #7dd8f7; transform: scale(1.03); border-bottom-width: 2px; }
+        .btn-generate:active { transform: scale(0.98); }
+        .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .btn-print {
-            background: var(--ink);
-            color: var(--paper);
-            border-color: var(--ink);
+            background: rgba(255,255,255,0.9);
+            color: #1e3b47;
+            border-bottom: 4px solid #b2d4e8;
         }
-        .btn-print:hover { background: #2d2d4e; }
+        .btn-print:hover { background: #fff; border-bottom-width: 2px; transform: scale(1.02); }
 
         .btn-reset {
-            background: transparent;
-            color: var(--ink);
-            border-color: var(--light-rule);
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            border-bottom: 4px solid rgba(0,0,0,0.3);
+            box-shadow: none;
         }
-        .btn-reset:hover { border-color: var(--ink); }
+        .btn-reset:hover { background: rgba(255,255,255,0.18); border-bottom-width: 2px; }
 
-        /* ─── PRINT STYLES ─── */
+        /* STATUS BAR */
+        .status-bar {
+            text-align: center;
+            margin-bottom: 1rem;
+            min-height: 1.5rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(10,30,45,0.7);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 0.45rem 1.3rem;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+        .status-dot.loading {
+            animation: pulse-dot 0.9s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            padding-top: 1.5rem;
+            border-top: 1px dashed rgba(180,220,240,0.15);
+            margin-top: 1rem;
+        }
+
+        /* AI MODE badge on card */
+        .ai-generated-tag {
+            display: none;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #5bc8f5, #5be5b0);
+            color: #0a2233;
+            padding: 0.18rem 0.7rem;
+            border-radius: 20px;
+            align-self: flex-start;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.3px;
+        }
+        .ai-mode .ai-generated-tag { display: inline-block; }
+
+        /* Spin animation for regen button */
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spinning { animation: spin 0.7s linear infinite; }
+
+        /* Card fade-in animation */
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .carte.animated { animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+        .carte:nth-child(1).animated { animation-delay: 0s; }
+        .carte:nth-child(2).animated { animation-delay: 0.08s; }
+        .carte:nth-child(3).animated { animation-delay: 0.16s; }
+
+        /* PRINT STYLES */
         @media print {
-            @page {
-                size: A4 portrait;
-                margin: 10mm 12mm;
-            }
-
-            body { background: white; padding: 0; font-size: 11px; }
-            body::before { display: none; }
-            .app-header, .form-card, .action-row, .ai-badge { display: none !important; }
-
-            #printArea {
-                display: block !important;
-                box-shadow: none;
-                padding: 0;
-                animation: none;
-                border-radius: 0;
-            }
-
-            #printArea::before { height: 3px; }
-
-            .fiche-header {
-                margin-bottom: 12px;
-                padding-bottom: 8px;
-            }
-
-            .fiche-title { font-size: 16px; }
-            .fiche-logo { font-size: 10px; }
-
-            .meta-grid {
-                gap: 6px 30px;
-                margin-bottom: 12px;
-                font-size: 12px;
-            }
-
-            .section { margin-top: 12px; }
-
-            .section-label { margin-bottom: 6px; }
-            .section-num { width: 18px; height: 18px; font-size: 9px; }
-            .section-name { font-size: 11px; }
-
-            .section-intro { font-size: 11px; margin-bottom: 4px; }
-
-            .task-block {
-                padding: 8px 12px;
-                margin: 6px 0 8px;
-                font-size: 11px;
-                line-height: 1.5;
-            }
-
-            .task-block .ai-tag { font-size: 8px; top: -8px; }
-
-            .write-line { height: 20px; }
-
-            .signatures {
-                margin-top: 16px;
-                padding-top: 10px;
-            }
-
-            .sig-area { height: 40px; }
-            .sig-box { font-size: 9px; }
+            body { background: white; padding: 0; }
+            body::before, body::after { display: none; }
+            .header { margin-bottom: 1rem; }
+            h1, .tagline { color: #0e2233; }
+            .selectors, .actions-bar, .ai-toggle-zone, .context-zone, .status-bar, .footer, .card-actions, .icon-btn { display: none !important; }
+            .cards-grid { gap: 1rem; }
+            .carte { box-shadow: 0 2px 6px rgba(0,0,0,0.15); break-inside: avoid; }
+            .status-badge { color: #0e2233; border-color: #ccc; }
         }
 
         @media (max-width: 600px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .form-group.full { grid-column: 1; }
-            .meta-grid { grid-template-columns: 1fr; }
-            .signatures { grid-template-columns: 1fr; }
-            #printArea { padding: 24px; }
+            .btn { padding: 0.8rem 1.4rem; font-size: 0.95rem; }
         }
     </style>
 </head>
 <body>
+<div class="wrapper">
 
-<div class="app-wrapper">
-
-    <div class="app-header no-print">
-        <div class="eyebrow">Collège · Vie Scolaire</div>
-        <h1>Fiche de <span>réflexion</span><br>pédagogique</h1>
-    </div>
-
-    <div class="form-card no-print">
-        <div class="ai-badge">Tâche générée automatiquement</div>
-
-        <div class="form-group" style="margin-bottom:20px; padding:16px; background:#fdf6ec; border:1.5px solid #e6c87a; border-radius:6px;">
-            <label style="color:#8a6200;">🔑 Clé API Anthropic</label>
-            <input type="password" id="apiKey" placeholder="sk-ant-..." style="font-family:monospace; letter-spacing:1px;">
-            <div style="margin-top:6px; font-size:11px; color:#999;">Conservée en mémoire le temps de la session — jamais envoyée ailleurs que vers api.anthropic.com</div>
-        </div>
-
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Nom & Prénom de l'élève</label>
-                <input type="text" id="studentName" placeholder="Ex : Lucas Bernard">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-top">
+            <div>
+                <h1>📋 Travaux Réparateurs <span class="chip">IA</span></h1>
+                <p class="tagline" style="margin-top:0.5rem">Génère 3 travaux constructifs pour le collège · 30–45 min chacun</p>
             </div>
-            <div class="form-group">
-                <label>Classe / Niveau</label>
-                <select id="level">
-                    <option value="6ème">6ème</option>
-                    <option value="5ème">5ème</option>
-                    <option value="4ème">4ème</option>
-                    <option value="3ème">3ème</option>
-                    <option value="UPE2A / ULIS">UPE2A / ULIS</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Matière concernée</label>
-                <select id="subject"></select>
-            </div>
-            <div class="form-group">
-                <label>Motif de la sanction</label>
-                <select id="motif"></select>
-            </div>
-
-            <div class="form-section-title">Informations complémentaires</div>
-
-            <div class="form-group">
-                <label>Nom du professeur / AED</label>
-                <input type="text" id="teacherName" placeholder="Ex : M. Dupont">
-            </div>
-            <div class="form-group">
-                <label>Date de l'incident</label>
-                <input type="date" id="incidentDate">
-            </div>
-
-            <div class="form-group full">
-                <label>Contexte / Détails de l'incident (optionnel)</label>
-                <textarea id="context" placeholder="Décrivez brièvement la situation pour personnaliser la tâche pédagogique IA…"></textarea>
+            <div class="ai-toggle-zone" id="aiToggle" title="Activer la génération par IA (Claude)">
+                <span class="ai-icon">🤖</span>
+                <span class="ai-label">Mode IA</span>
+                <div class="toggle-pill" id="togglePill"></div>
             </div>
         </div>
-
-        <button class="btn-generate" id="generateBtn" onclick="generateFiche()">
-            <span class="btn-text">✦ Générer la Fiche</span>
-            <div class="spinner"></div>
-        </button>
     </div>
 
-    <div id="printArea">
-        <div class="fiche-header">
-            <div style="display:flex; align-items:center; gap:14px;">
-                <img src="data:image/png;base64,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" alt="Logo Collège Alain" style="height:70px; width:auto;">
-                <div>
-                    <div class="fiche-logo">Collège Alain — Maromme</div>
-                    <div style="margin-top:6px; font-size:12px; color:#888;">Année scolaire 2025–2026</div>
+    <!-- SELECTORS -->
+    <div class="selectors">
+        <div class="sel-group">
+            <span class="sel-label">📚 Matière</span>
+            <select id="matiereSelect">
+                <option value="maths">🔢 Mathématiques</option>
+                <option value="francais">📖 Français</option>
+                <option value="histgeo">🌍 Histoire-Géographie</option>
+                <option value="sciences">🔬 Sciences</option>
+                <option value="langue">💬 Langue vivante</option>
+                <option value="eps">🏃 EPS</option>
+                <option value="arts">🎨 Arts plastiques / Musique</option>
+                <option value="autre">🔄 Interdisciplinaire</option>
+            </select>
+        </div>
+        <div class="sel-group">
+            <span class="sel-label">⚠️ Situation</span>
+            <select id="fauteSelect">
+                <option value="bavardage">💬 Bavardage perturbateur</option>
+                <option value="oublie">📒 Oubli de matériel</option>
+                <option value="travail">✏️ Travail non fait</option>
+                <option value="pasrespect">🤝 Manque de respect</option>
+                <option value="decrochage">🌀 Passivité / décrochage</option>
+                <option value="telephone">📱 Usage du téléphone</option>
+                <option value="triche">👁️ Tentative de triche</option>
+                <option value="autre">🔄 Autre situation</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- AI CONTEXT (visible only in AI mode) -->
+    <div class="context-zone" id="contextZone">
+        <label>💡 Contexte supplémentaire (optionnel)</label>
+        <textarea id="contextInput" placeholder="Ex : L'élève a perturbé plusieurs fois la séquence sur les fractions. Il est en 5e, a tendance à l'humour de classe..."></textarea>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status-bar">
+        <div class="status-badge" id="statusBadge">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">📌 Mathématiques · Collège · Bavardage perturbateur</span>
+        </div>
+    </div>
+
+    <!-- CARDS -->
+    <div class="cards-grid" id="cardsGrid">
+        <div class="carte c1 animated" id="carte1">
+            <div class="ai-generated-tag">✨ Généré par IA</div>
+            <div class="cat-badge">🔍 Comprendre & Analyser</div>
+            <div class="matiere-tag" id="matiere1">Mathématiques</div>
+            <div class="pun-text" id="pun1">Rédiger un problème de mathématiques original sur le chapitre en cours, avec correction détaillée et explications.</div>
+            <div class="obj-box" id="details1"><strong>Objectif :</strong> Approfondir sa compréhension en créant un exercice</div>
+            <div class="card-footer">
+                <span class="duree-badge" id="duree1">⏱️ 35–40 min</span>
+                <div class="card-actions">
+                    <button class="icon-btn" title="Copier ce travail" onclick="copyCard(1)">📋</button>
+                    <button class="icon-btn" id="regen1" title="Régénérer ce travail" onclick="regenCard(1)">🔄</button>
                 </div>
             </div>
-            <div class="fiche-title">
-                <small>Document</small>
-                Fiche de réflexion
+        </div>
+        <div class="carte c2 animated" id="carte2">
+            <div class="ai-generated-tag">✨ Généré par IA</div>
+            <div class="cat-badge">🛠️ Réparer & Contribuer</div>
+            <div class="matiere-tag" id="matiere2">Mathématiques</div>
+            <div class="pun-text" id="pun2">Créer une fiche méthode illustrée sur une notion difficile du chapitre, avec 3 exemples commentés.</div>
+            <div class="obj-box" id="details2"><strong>Objectif :</strong> Structurer ses connaissances pour aider les autres</div>
+            <div class="card-footer">
+                <span class="duree-badge" id="duree2">⏱️ 35–40 min</span>
+                <div class="card-actions">
+                    <button class="icon-btn" title="Copier ce travail" onclick="copyCard(2)">📋</button>
+                    <button class="icon-btn" id="regen2" title="Régénérer ce travail" onclick="regenCard(2)">🔄</button>
+                </div>
             </div>
         </div>
-
-        <div class="meta-grid">
-            <div class="meta-item">
-                <strong>Élève</strong>
-                <div class="meta-value" id="outName"></div>
+        <div class="carte c3 animated" id="carte3">
+            <div class="ai-generated-tag">✨ Généré par IA</div>
+            <div class="cat-badge">📈 Progresser & S'engager</div>
+            <div class="matiere-tag" id="matiere3">Mathématiques</div>
+            <div class="pun-text" id="pun3">Résoudre 12 exercices supplémentaires du manuel (niveaux variés) et rédiger un bilan des difficultés rencontrées.</div>
+            <div class="obj-box" id="details3"><strong>Objectif :</strong> Consolider ses compétences par la pratique</div>
+            <div class="card-footer">
+                <span class="duree-badge" id="duree3">⏱️ 35–40 min</span>
+                <div class="card-actions">
+                    <button class="icon-btn" title="Copier ce travail" onclick="copyCard(3)">📋</button>
+                    <button class="icon-btn" id="regen3" title="Régénérer ce travail" onclick="regenCard(3)">🔄</button>
+                </div>
             </div>
-            <div class="meta-item">
-                <strong>Date</strong>
-                <div class="meta-value" id="outDate"></div>
-            </div>
-            <div class="meta-item">
-                <strong>Classe</strong>
-                <div class="meta-value" id="outLevel"></div>
-            </div>
-            <div class="meta-item">
-                <strong>Matière</strong>
-                <div class="meta-value" id="outSubject"></div>
-            </div>
-            <div class="meta-item">
-                <strong>Motif</strong>
-                <div class="meta-value" id="outMotif"></div>
-            </div>
-            <div class="meta-item">
-                <strong>Professeur / AED</strong>
-                <div class="meta-value" id="outTeacher"></div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-label">
-                <div class="section-num">1</div>
-                <div class="section-name">Explication du comportement</div>
-            </div>
-            <div class="section-intro" id="outIntro1"> </div>
-            <div class="write-lines">
-                <div class="write-line"></div>
-                <div class="write-line"></div>
-                <div class="write-line"></div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-label">
-                <div class="section-num">2</div>
-                <div class="section-name">Travail pédagogique</div>
-            </div>
-            <div class="section-intro" id="outIntro2"> </div>
-            <div class="task-block">
-                <div class="ai-tag">✦ IA</div>
-                <div id="outTask"></div>
-            </div>
-            <div class="write-lines">
-                <div class="write-line"></div>
-                <div class="write-line"></div>
-                <div class="write-line"></div>
-                <div class="write-line"></div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-label">
-                <div class="section-num">3</div>
-                <div class="section-name">Engagement de l'élève</div>
-            </div>
-            <div class="section-intro" id="outIntro3"> </div>
-            <div class="write-lines">
-                <div class="write-line"></div>
-                <div class="write-line"></div>
-            </div>
-        </div>
-
-        <div id="errorBanner" style="display:none; background:#fdf0f0; border:1.5px solid #c0392b; border-radius:4px; padding:12px 16px; margin-top:16px; font-size:12px; color:#c0392b; font-family:monospace;"></div>
-
-        <div class="signatures">
-            <div class="sig-box">
-                <div class="sig-area"></div>
-                Signature de l'élève
-            </div>
-            <div class="sig-box">
-                <div class="sig-area"></div>
-                Visa du Professeur / AED
-            </div>
-            <div class="sig-box">
-                <div class="sig-area"></div>
-                Signature des parents
-            </div>
-        </div>
-
-        <div class="action-row no-print">
-            <button class="btn-action btn-reset" onclick="resetForm()">← Nouvelle fiche</button>
-            <button class="btn-action btn-print" onclick="window.print()">Imprimer / PDF ↗</button>
         </div>
     </div>
 
+    <!-- ACTION BUTTONS -->
+    <div class="actions-bar">
+        <button class="btn btn-generate" id="btnGenerer">🎲 Générer les 3 travaux</button>
+        <button class="btn btn-print" onclick="window.print()">🖨️ Imprimer</button>
+        <button class="btn btn-reset" id="btnRemettre">↺ Réinitialiser</button>
+    </div>
+
+    <div class="footer">
+        ⚙️ Travaux de 30 à 45 minutes · Collège · Mode IA disponible
+    </div>
 </div>
 
 <script>
-    const subjects = [
-        "Vie Scolaire", "Français", "Mathématiques", "Histoire-Géographie",
-        "EMC (Enseignement Civique)", "SVT", "Physique-Chimie", "Technologie",
-        "Anglais", "Espagnol", "Allemand", "Italien", "Arts Plastiques",
-        "Éducation Musicale", "EPS", "Documentation (CDI)", "Latin/Grec"
-    ];
+(function() {
 
-    const motifsOptions = [
-        "Bavardages / Perturbation",
-        "Insolence / Manque de respect",
-        "Oubli de matériel répété",
-        "Usage du téléphone",
-        "Refus de travail",
-        "Dégradation / Manque de soin",
-        "Retard injustifié",
-        "Non-respect des règles de sécurité",
-        "Triche / Plagiat",
-        "Violence verbale envers un camarade",
-        "Comportement perturbateur en EPS",
-        "Refus d'obtempérer"
-    ];
+/* ===================== DATA BANK ===================== */
+const banque = {
+    maths: {
+        comprendre: [
+            "Rédiger un problème de mathématiques original sur le chapitre en cours, avec correction détaillée et explications.",
+            "Analyser 3 erreurs fréquentes dans le chapitre et expliquer pourquoi on les fait (avec schémas).",
+            "Créer un mini-cours de 20 lignes sur une notion, comme si on devait l'expliquer à un élève absent.",
+            "Démontrer une propriété vue en classe en rédigeant toutes les étapes de manière claire.",
+            "Chercher 3 applications concrètes des mathématiques dans la vie quotidienne en lien avec le chapitre.",
+            "Créer un exercice à choix multiples (10 questions) sur le chapitre, avec corrigé détaillé."
+        ],
+        reparer: [
+            "Créer une fiche méthode illustrée sur une notion difficile du chapitre, avec 3 exemples commentés.",
+            "Préparer un quiz de 10 questions (avec réponses) pour aider les camarades à réviser.",
+            "Réaliser une affiche expliquant une règle ou formule importante, avec des couleurs et des schémas.",
+            "Écrire 5 conseils pour éviter les erreurs de calcul les plus courantes dans le chapitre.",
+            "Créer un jeu de cartes (sur feuille) avec 10 questions/réponses sur le chapitre.",
+            "Concevoir une carte mentale du chapitre avec les définitions, théorèmes et exemples clés."
+        ],
+        progresser: [
+            "Résoudre 12 exercices supplémentaires du manuel (niveaux variés) et rédiger un bilan des difficultés.",
+            "Tenir un journal de bord pendant une semaine : noter chaque jour une notion comprise ou à retravailler.",
+            "Se fixer 3 objectifs précis pour le prochain chapitre et écrire comment les atteindre.",
+            "Refaire 6 exercices déjà corrigés en les expliquant étape par étape (comme un professeur).",
+            "Créer des flashcards sur les formules et définitions du chapitre (15 minimum).",
+            "Rédiger une auto-évaluation : ce que j'ai compris, ce qui pose encore problème, et comment y remédier."
+        ]
+    },
+    francais: {
+        comprendre: [
+            "Rédiger une analyse littéraire de 25 lignes sur un texte étudié en classe, en relevant les figures de style.",
+            "Écrire une fiche de lecture détaillée sur le livre en cours d'étude (personnages, thèmes, passages clés).",
+            "Comparer deux textes du chapitre en relevant les similitudes et différences (fond et forme).",
+            "Expliquer en 20 lignes l'importance de la grammaire pour bien s'exprimer, avec des exemples.",
+            "Rechercher l'étymologie de 15 mots du texte étudié et expliquer comment elle éclaire leur sens.",
+            "Analyser la construction d'un poème étudié (mètres, rimes, images) et en proposer une interprétation."
+        ],
+        reparer: [
+            "Rédiger une saynète de théâtre (1 page) sur le thème du respect en classe, avec 2 personnages.",
+            "Créer un abécédaire du chapitre : pour chaque lettre, un mot important et sa définition.",
+            "Préparer une dictée de 15 lignes (inventée) utilisant les difficultés orthographiques vues en classe.",
+            "Écrire un poème de 15 vers sur l'importance de l'écoute et du silence pour apprendre.",
+            "Concevoir une affiche sur les 10 règles d'or de l'expression écrite (avec exemples).",
+            "Rédiger 5 règles de grammaire expliquées simplement, avec 3 exemples pour chacune."
+        ],
+        progresser: [
+            "Rédiger un texte de 25 lignes sans faute d'orthographe, sur un sujet libre, puis l'auto-corriger.",
+            "Apprendre 8 nouvelles règles d'orthographe et les expliquer avec des exemples personnels.",
+            "Tenir un carnet de vocabulaire : noter 20 nouveaux mots avec leur définition et une phrase d'exemple.",
+            "Créer des flashcards de conjugaison pour 8 verbes difficiles, à tous les temps étudiés.",
+            "Rédiger un journal de lecture pendant 3 jours : ses impressions sur le livre étudié.",
+            "Réécrire un passage d'un texte étudié à la première personne et expliquer les changements opérés."
+        ]
+    },
+    histgeo: {
+        comprendre: [
+            "Rédiger une biographie détaillée d'un personnage historique étudié en classe (25 lignes minimum).",
+            "Construire une frise chronologique illustrée de la période en cours (12 événements clés).",
+            "Expliquer les causes et conséquences d'un événement historique majeur du chapitre.",
+            "Analyser un document historique (carte, texte, image) vu en classe et en faire une critique.",
+            "Comparer deux civilisations ou deux époques étudiées (points communs et différences).",
+            "Rédiger un discours imaginaire qu'aurait pu prononcer un personnage historique important."
+        ],
+        reparer: [
+            "Dessiner une carte mentale du chapitre de géographie avec les notions clés et les exemples.",
+            "Créer un quiz de 15 questions (avec réponses) sur le chapitre d'histoire ou de géographie.",
+            "Réaliser une affiche présentant un pays ou une région étudiée (avec données clés).",
+            "Préparer un exposé écrit de 5 minutes sur un sujet du chapitre.",
+            "Écrire une lettre imaginaire d'un personnage historique à sa famille racontant un événement.",
+            "Concevoir une carte simplifiée d'une région ou d'un territoire étudié, avec légende."
+        ],
+        progresser: [
+            "Résumer le chapitre en 15 lignes, puis le réduire à 8, puis à 4 (exercice de synthèse progressive).",
+            "Apprendre par cœur 12 dates clés et rédiger une phrase pour chaque expliquant leur importance.",
+            "Relire ses notes du chapitre et les réorganiser sous forme de plan détaillé.",
+            "Créer des flashcards sur les définitions et notions importantes du chapitre (20 minimum).",
+            "Rédiger 5 questions de réflexion sur le chapitre et y répondre en 5 lignes chacune.",
+            "Réaliser une comparaison entre une situation historique du cours et un événement contemporain."
+        ]
+    },
+    sciences: {
+        comprendre: [
+            "Rédiger un compte-rendu d'expérience imaginaire sur le thème du chapitre (protocole, observations, conclusion).",
+            "Expliquer avec ses mots une notion scientifique complexe du chapitre, comme si on l'enseignait.",
+            "Faire une recherche sur un scientifique lié au chapitre et présenter ses découvertes (25 lignes).",
+            "Décrire 4 applications concrètes de la leçon dans la vie de tous les jours ou dans la technologie.",
+            "Schématiser un phénomène scientifique vu en classe et légender précisément.",
+            "Créer un petit lexique illustré des 15 mots-clés du chapitre."
+        ],
+        reparer: [
+            "Créer une fiche de révision illustrée sur le chapitre (schémas, définitions, formules).",
+            "Préparer 5 expériences simples à faire à la maison pour illustrer le chapitre (avec consignes).",
+            "Réaliser une affiche de sensibilisation sur un thème scientifique (environnement, santé, etc.).",
+            "Écrire 12 questions-réponses pour tester les connaissances sur le chapitre.",
+            "Concevoir un petit livret d'initiation à la matière pour les plus jeunes (4 pages minimum).",
+            "Créer un jeu de memory (8 paires) sur les définitions et notions du chapitre."
+        ],
+        progresser: [
+            "Refaire tous les exercices du chapitre en notant ceux qui posent problème et pourquoi.",
+            "Tenir un cahier d'expériences : imaginer et décrire 4 expériences en lien avec le chapitre.",
+            "Créer une carte mentale du chapitre avec les liens entre les différentes notions.",
+            "Rédiger 6 questions de réflexion sur le chapitre (ouvertes, sans réponse immédiate).",
+            "Apprendre par cœur 5 lois ou formules importantes et savoir les expliquer.",
+            "Rédiger un article de blog scientifique (20 lignes) sur un sujet du chapitre, pour un public non-spécialiste."
+        ]
+    },
+    langue: {
+        comprendre: [
+            "Rédiger un texte de 20 lignes dans la langue cible sur un sujet du quotidien (avec dictionnaire).",
+            "Traduire un texte français de 15 lignes dans la langue étudiée, puis comparer avec une correction.",
+            "Expliquer en français 8 règles de grammaire de la langue étudiée, avec exemples.",
+            "Faire une recherche sur un aspect culturel d'un pays de la langue (coutumes, fêtes, monuments).",
+            "Écouter une chanson dans la langue (avec paroles) et écrire un résumé détaillé de ce qu'elle raconte.",
+            "Lire un petit article (niveau débutant) dans la langue et en faire un résumé en français."
+        ],
+        reparer: [
+            "Créer un imagier thématique (15 mots illustrés) sur le vocabulaire du chapitre.",
+            "Préparer un jeu de rôle de 5 minutes (dialogue écrit) sur une situation de la vie courante.",
+            "Concevoir une mini-leçon de vocabulaire pour aider les camarades (avec jeux).",
+            "Créer des flashcards de vocabulaire (mot en langue / traduction / image) sur 25 mots.",
+            "Rédiger 10 questions en langue (avec réponses) pour interviewer un camarade imaginaire.",
+            "Créer un abécédaire bilingue sur le thème du chapitre : 10 mots avec image, traduction et exemple."
+        ],
+        progresser: [
+            "Apprendre par cœur 15 phrases utiles dans la langue et les utiliser dans des phrases personnelles.",
+            "Tenir un petit journal pendant 4 jours : écrire chaque jour 4 phrases dans la langue.",
+            "Se fixer un objectif de vocabulaire (20 mots par semaine) et créer un tableau de suivi.",
+            "Écrire un dialogue de 25 lignes dans la langue avec un thème imposé.",
+            "Créer une présentation (10 phrases) sur soi-même dans la langue, comme pour un échange.",
+            "Rédiger une lettre (12 lignes) à un correspondant imaginaire dans la langue étudiée."
+        ]
+    },
+    eps: {
+        comprendre: [
+            "Rédiger une analyse des règles officielles d'un sport pratiqué en cours (20 lignes avec schémas).",
+            "Expliquer les bénéfices physiologiques de l'activité physique régulière en lien avec la séquence.",
+            "Créer un lexique illustré de 15 termes techniques du sport ou de l'activité pratiquée.",
+            "Rechercher et présenter la biographie d'un athlète de haut niveau lié à l'activité du cours.",
+            "Analyser les notions d'équilibre, coordination ou endurance vues en cours et leurs applications.",
+            "Décrire une stratégie collective pour améliorer les performances d'une équipe dans l'activité pratiquée."
+        ],
+        reparer: [
+            "Concevoir un échauffement de 10 minutes adapté à l'activité du cours, avec explication de chaque exercice.",
+            "Créer un règlement illustré de l'activité pratiquée à destination d'un élève absent.",
+            "Préparer un plan d'entraînement d'une semaine pour améliorer la condition physique générale.",
+            "Rédiger les règles du fair-play et du respect dans le sport, avec des exemples concrets.",
+            "Concevoir un quiz de 10 questions sur les règles et les techniques de l'activité du cours.",
+            "Créer une affiche de sensibilisation sur les bénéfices du sport et du mouvement pour la santé."
+        ],
+        progresser: [
+            "Se fixer 3 objectifs personnels en EPS pour le prochain trimestre et écrire comment les atteindre.",
+            "Tenir un journal de bord sportif pendant 5 jours : noter l'activité physique quotidienne et ses ressentis.",
+            "Rédiger une auto-évaluation de ses compétences dans l'activité en cours (points forts / à améliorer).",
+            "Créer un programme de 3 exercices à pratiquer chez soi pour progresser dans l'activité.",
+            "Analyser une de ses performances lors d'un cours et proposer 4 pistes concrètes d'amélioration.",
+            "Rechercher 5 techniques de récupération sportive et les expliquer en les illustrant."
+        ]
+    },
+    arts: {
+        comprendre: [
+            "Analyser une œuvre d'art (ou une composition musicale) étudiée en cours : technique, époque, message.",
+            "Rédiger la biographie d'un artiste ou compositeur vu en cours (25 lignes), en lien avec son œuvre.",
+            "Comparer deux œuvres ou deux styles artistiques étudiés en relevant similitudes et différences.",
+            "Créer un lexique illustré de 15 termes techniques de la discipline artistique (peinture, musique…).",
+            "Expliquer comment les arts plastiques ou la musique reflètent leur époque historique.",
+            "Décrire en 20 lignes la technique utilisée dans une création du cours, étape par étape."
+        ],
+        reparer: [
+            "Concevoir une affiche présentant un mouvement artistique ou musical étudié, avec exemples.",
+            "Préparer un quiz de 12 questions (avec réponses) sur les œuvres et artistes du cours.",
+            "Rédiger une critique d'art de 20 lignes sur une œuvre de son choix liée au cours.",
+            "Créer un programme de concert imaginaire (ou d'exposition) autour du thème de la séquence.",
+            "Écrire un texte de présentation d'une œuvre, comme s'il était affiché dans un musée.",
+            "Réaliser un carnet d'inspiration (sur feuille) : 5 références artistiques liées au thème du cours."
+        ],
+        progresser: [
+            "Se fixer 3 objectifs pour progresser dans la discipline artistique et décrire les étapes pour y parvenir.",
+            "Tenir un journal créatif pendant 4 jours : noter une observation artistique quotidienne.",
+            "Rédiger une auto-évaluation de sa pratique : points forts, difficultés, ce qu'on voudrait explorer.",
+            "Rechercher et présenter 5 techniques artistiques différentes avec un exemple pour chacune.",
+            "Créer des fiches de révision visuelles sur les notions clés de la séquence.",
+            "Écrire une lettre à un artiste étudié pour lui poser 5 questions sur sa démarche créative."
+        ]
+    },
+    autre: {
+        comprendre: [
+            "Rédiger une synthèse de 25 lignes sur le chapitre en cours, en mettant en évidence les idées principales.",
+            "Créer une carte mentale complète du dernier cours vu en classe.",
+            "Expliquer en 20 lignes pourquoi cette matière est importante pour sa culture générale.",
+            "Faire une recherche sur un métier lié à cette discipline et présenter ses découvertes.",
+            "Comparer cette matière avec une autre discipline : points communs et différences.",
+            "Préparer 10 questions de révision sur le chapitre, avec réponses détaillées."
+        ],
+        reparer: [
+            "Préparer un quiz de 15 questions sur le chapitre pour tester ses camarades.",
+            "Créer une affiche motivationnelle sur l'importance de l'effort et du travail dans toutes les matières.",
+            "Écrire une lettre de conseils à un élève plus jeune sur comment réussir dans cette matière.",
+            "Concevoir une fiche méthode générique pour mieux apprendre ses leçons.",
+            "Réaliser un petit journal de bord de la semaine avec ce qui a été appris chaque jour.",
+            "Créer un aide-mémoire sur les notions importantes du chapitre (1 page recto-verso)."
+        ],
+        progresser: [
+            "Établir un planning de révision pour la semaine incluant toutes les matières.",
+            "Rédiger 12 questions à se poser avant un contrôle pour vérifier ses connaissances.",
+            "Créer des fiches de révision sur les points faibles identifiés dans la matière.",
+            "Se fixer 4 objectifs d'organisation pour le mois à venir (matériel, temps, méthode).",
+            "Tenir un cahier de progrès : noter chaque jour une petite victoire ou une chose comprise.",
+            "Apprendre par cœur 5 définitions ou notions clés du chapitre et savoir les reformuler."
+        ]
+    }
+};
 
-    // Init selects
-    const subjectSelect = document.getElementById('subject');
-    subjects.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s; opt.textContent = s;
-        subjectSelect.appendChild(opt);
+const objectifsParFaute = {
+    bavardage: {
+        obj1: "Comprendre l'impact du bruit sur l'apprentissage et la concentration de tous",
+        obj2: "Créer un outil qui favorise le calme et l'attention en classe",
+        obj3: "Développer des stratégies personnelles pour mieux écouter et participer"
+    },
+    oublie: {
+        obj1: "Prendre conscience du lien entre organisation matérielle et réussite scolaire",
+        obj2: "Concevoir un système anti-oubli personnalisé et efficace",
+        obj3: "Automatiser les routines d'organisation par la pratique"
+    },
+    travail: {
+        obj1: "Analyser les freins au travail personnel et identifier des solutions",
+        obj2: "Produire un contenu de qualité pour rattraper le travail manqué",
+        obj3: "Planifier son travail sur la durée et respecter ses engagements"
+    },
+    pasrespect: {
+        obj1: "Développer l'empathie et comprendre l'importance du respect du cadre collectif",
+        obj2: "Réparer par une contribution positive et valorisante pour la classe",
+        obj3: "S'engager concrètement à adopter des comportements respectueux"
+    },
+    decrochage: {
+        obj1: "Identifier les causes de la démotivation et apprendre à les exprimer",
+        obj2: "Retrouver du sens par une action concrète, gratifiante et utile",
+        obj3: "Se fixer un premier objectif accessible pour renouer avec la réussite"
+    },
+    telephone: {
+        obj1: "Comprendre les impacts cognitifs du téléphone sur l'apprentissage et la mémorisation",
+        obj2: "Concevoir une charte personnelle d'utilisation responsable du numérique",
+        obj3: "Développer des stratégies concrètes pour gérer son attention en classe"
+    },
+    triche: {
+        obj1: "Analyser les causes de la tentation de tricher et leurs conséquences à long terme",
+        obj2: "Renforcer ses connaissances de manière honnête et autonome",
+        obj3: "S'engager dans une démarche d'apprentissage confiant et personnel"
+    },
+    autre: {
+        obj1: "Transformer une difficulté en opportunité d'apprentissage et de réflexion",
+        obj2: "Contribuer positivement à la vie de la classe ou du groupe",
+        obj3: "Progresser dans ses méthodes de travail et son autonomie"
+    }
+};
+
+const durees = ["30–35 min","35–40 min","40–45 min","30–40 min","35–45 min"];
+
+const nomsMatiere = {
+    maths: 'Mathématiques', francais: 'Français', histgeo: 'Histoire-Géo',
+    sciences: 'Sciences', langue: 'Langue vivante', eps: 'EPS',
+    arts: 'Arts / Musique', autre: 'Interdisciplinaire'
+};
+const nomsNiveau = { primaire: 'Primaire', college: 'Collège', lycee: 'Lycée' };
+const nomsFaute = {
+    bavardage: 'Bavardage', oublie: 'Oubli de matériel', travail: 'Travail non fait',
+    pasrespect: 'Manque de respect', decrochage: 'Passivité / décrochage',
+    telephone: 'Usage du téléphone', triche: 'Tentative de triche', autre: 'Autre situation'
+};
+
+/* ===================== DOM ===================== */
+const matiereSelect = document.getElementById('matiereSelect');
+const fauteSelect   = document.getElementById('fauteSelect');
+const niveauSelect  = { value: 'college' }; // collège uniquement
+const btnGenerer    = document.getElementById('btnGenerer');
+const btnRemettre   = document.getElementById('btnRemettre');
+const aiToggle      = document.getElementById('aiToggle');
+const togglePill    = document.getElementById('togglePill');
+const contextZone   = document.getElementById('contextZone');
+const contextInput  = document.getElementById('contextInput');
+const statusText    = document.getElementById('statusText');
+const statusDot     = document.getElementById('statusDot');
+const cardsGrid     = document.getElementById('cardsGrid');
+
+let aiMode = false;
+let currentData = [{},{},{}]; // cache for regen single cards
+
+/* ===================== AI TOGGLE ===================== */
+aiToggle.addEventListener('click', () => {
+    aiMode = !aiMode;
+    togglePill.classList.toggle('on', aiMode);
+    contextZone.classList.toggle('visible', aiMode);
+    document.querySelectorAll('.carte').forEach(c => c.classList.toggle('ai-mode', aiMode));
+    if (aiMode) {
+        setStatus('✨ Mode IA activé — Claude va générer des travaux personnalisés', false);
+    } else {
+        updateStatus();
+    }
+});
+
+/* ===================== STATUS ===================== */
+function updateStatus() {
+    const m = matiereSelect.value, f = fauteSelect.value, n = niveauSelect.value;
+    setStatus(`📌 ${nomsMatiere[m]} · Collège · ${nomsFaute[f]}`, false);
+}
+
+function setStatus(text, loading) {
+    statusText.textContent = text;
+    statusDot.classList.toggle('loading', loading);
+}
+
+[matiereSelect, fauteSelect].forEach(s => s.addEventListener('change', updateStatus));
+
+/* ===================== RANDOM PICK ===================== */
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function getLocalData(matiere, faute) {
+    const b = banque[matiere] || banque.autre;
+    const o = objectifsParFaute[faute] || objectifsParFaute.autre;
+    return [
+        { text: pick(b.comprendre), obj: o.obj1, duree: pick(durees) },
+        { text: pick(b.reparer),    obj: o.obj2, duree: pick(durees) },
+        { text: pick(b.progresser), obj: o.obj3, duree: pick(durees) }
+    ];
+}
+
+/* ===================== CARD UPDATE ===================== */
+function applyCard(idx, data, matiere) {
+    const n = idx + 1;
+    document.getElementById(`pun${n}`).textContent = data.text;
+    document.getElementById(`details${n}`).innerHTML = `<strong>Objectif pédagogique :</strong> ${data.obj}`;
+    document.getElementById(`duree${n}`).textContent = `⏱️ ${data.duree}`;
+    document.getElementById(`matiere${n}`).textContent = nomsMatiere[matiere];
+    const carte = document.getElementById(`carte${n}`);
+    carte.classList.remove('animated');
+    void carte.offsetWidth;
+    carte.classList.add('animated');
+}
+
+/* ===================== AI GENERATION ===================== */
+async function generateWithAI(matiere, faute, niveau, context, cardsToGen = [0,1,2]) {
+    const cats = ['Comprendre & Analyser', 'Réparer & Contribuer', 'Progresser & S\'engager'];
+    const objKeys = ['obj1', 'obj2', 'obj3'];
+    const o = objectifsParFaute[faute] || objectifsParFaute.autre;
+
+    const prompt = `Tu es un professeur expert en pédagogie constructive. Génère exactement ${cardsToGen.length} travaux réparateurs pour un élève.
+
+Contexte :
+- Matière : ${nomsMatiere[matiere]}
+- Niveau : ${nomsNiveau[niveau]}
+- Situation : ${nomsFaute[faute]}
+- Contexte supplémentaire : ${context || 'aucun'}
+
+Pour chaque travail, donne :
+- Une description précise et concrète du travail à faire (2-3 phrases, durée 30-45 min)
+- L'objectif pédagogique en 1 phrase
+- La durée estimée (entre 30 et 45 min)
+
+Génère les travaux pour ces catégories : ${cardsToGen.map(i => cats[i]).join(', ')}
+
+Réponds UNIQUEMENT en JSON valide, format exact (tableau dans l'ordre des catégories demandées) :
+[
+  { "text": "...", "obj": "...", "duree": "35–40 min" }
+]
+
+Rien d'autre, aucun commentaire, aucun texte hors JSON.`;
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 1000,
+            messages: [{ role: "user", content: prompt }]
+        })
     });
 
-    const motifSelect = document.getElementById('motif');
-    motifsOptions.forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m; opt.textContent = m;
-        motifSelect.appendChild(opt);
+    const data = await response.json();
+    const raw = data.content?.map(c => c.text || '').join('') || '';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+}
+
+/* ===================== GENERATE ALL ===================== */
+async function genererComplet() {
+    const matiere = matiereSelect.value;
+    const faute   = fauteSelect.value;
+    const niveau  = niveauSelect.value;
+    const context = contextInput.value.trim();
+
+    btnGenerer.disabled = true;
+    setStatus('⏳ Génération en cours…', true);
+
+    // Set loading shimmer on all cards
+    [1,2,3].forEach(n => document.getElementById(`carte${n}`).classList.add('loading'));
+
+    try {
+        let results;
+        if (aiMode) {
+            results = await generateWithAI(matiere, faute, niveau, context, [0,1,2]);
+        } else {
+            results = getLocalData(matiere, faute);
+        }
+
+        currentData = results;
+        results.forEach((d, i) => applyCard(i, d, matiere));
+        document.querySelectorAll('.carte').forEach(c => c.classList.toggle('ai-mode', aiMode));
+        updateStatus();
+    } catch(e) {
+        console.error(e);
+        // Fallback to local
+        const fallback = getLocalData(matiere, faute);
+        currentData = fallback;
+        fallback.forEach((d, i) => applyCard(i, d, matiere));
+        setStatus('⚠️ IA indisponible — données locales utilisées', false);
+    }
+
+    [1,2,3].forEach(n => document.getElementById(`carte${n}`).classList.remove('loading'));
+    btnGenerer.disabled = false;
+}
+
+/* ===================== REGEN SINGLE CARD ===================== */
+window.regenCard = async function(n) {
+    const idx = n - 1;
+    const matiere = matiereSelect.value;
+    const faute   = fauteSelect.value;
+    const niveau  = niveauSelect.value;
+    const context = contextInput.value.trim();
+    const btn = document.getElementById(`regen${n}`);
+    const carte = document.getElementById(`carte${n}`);
+
+    btn.classList.add('spinning');
+    carte.classList.add('loading');
+
+    try {
+        let result;
+        if (aiMode) {
+            const arr = await generateWithAI(matiere, faute, niveau, context, [idx]);
+            result = arr[0];
+        } else {
+            const b = banque[matiere] || banque.autre;
+            const o = objectifsParFaute[faute] || objectifsParFaute.autre;
+            const keys = ['comprendre', 'reparer', 'progresser'];
+            const objKeys = ['obj1', 'obj2', 'obj3'];
+            result = { text: pick(b[keys[idx]]), obj: o[objKeys[idx]], duree: pick(durees) };
+        }
+        currentData[idx] = result;
+        applyCard(idx, result, matiere);
+    } catch(e) {
+        console.error(e);
+    }
+
+    btn.classList.remove('spinning');
+    carte.classList.remove('loading');
+};
+
+/* ===================== COPY CARD ===================== */
+window.copyCard = function(n) {
+    const cats = ['🔍 Comprendre & Analyser', '🛠️ Réparer & Contribuer', '📈 Progresser & S\'engager'];
+    const text = document.getElementById(`pun${n}`).textContent;
+    const obj  = document.getElementById(`details${n}`).textContent;
+    const duree = document.getElementById(`duree${n}`).textContent;
+    const matiere = document.getElementById(`matiere${n}`).textContent;
+
+    const content = `${cats[n-1]}\n${matiere}\n\n${text}\n\n${obj}\n${duree}`;
+
+    navigator.clipboard.writeText(content).then(() => {
+        const btn = document.querySelector(`#carte${n} .icon-btn`);
+        btn.textContent = '✅';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1500);
     });
+};
 
-    // Default date = today
-    const dateInput = document.getElementById('incidentDate');
-    dateInput.value = new Date().toISOString().split('T')[0];
+/* ===================== RESET ===================== */
+btnRemettre.addEventListener('click', () => {
+    matiereSelect.value = 'maths';
+    fauteSelect.value = 'bavardage';
+    contextInput.value = '';
+    if (aiMode) { aiMode = false; togglePill.classList.remove('on'); contextZone.classList.remove('visible'); }
+    genererComplet();
+});
 
-    async function generateFiche() {
-        const btn = document.getElementById('generateBtn');
-        btn.disabled = true;
-        btn.classList.add('loading');
+/* ===================== INIT ===================== */
+btnGenerer.addEventListener('click', genererComplet);
+window.addEventListener('load', () => { updateStatus(); genererComplet(); });
 
-        const name = document.getElementById('studentName').value || '....................';
-        const level = document.getElementById('level').value;
-        const subject = document.getElementById('subject').value;
-        const motif = document.getElementById('motif').value;
-        const teacher = document.getElementById('teacherName').value || '....................';
-        const context = document.getElementById('context').value;
-        const dateVal = document.getElementById('incidentDate').value;
-        const dateDisplay = dateVal
-            ? new Date(dateVal + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
-            : new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-
-        // Fill static fields
-        document.getElementById('outName').textContent = name;
-        document.getElementById('outDate').textContent = dateDisplay;
-        document.getElementById('outLevel').textContent = level;
-        document.getElementById('outSubject').textContent = subject;
-        document.getElementById('outMotif').textContent = motif;
-        document.getElementById('outTeacher').textContent = teacher;
-        document.getElementById('outTask').textContent = 'Génération en cours…';
-        document.getElementById('printArea').style.display = 'block';
-        document.getElementById('printArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-        // Récupération de la clé API
-        const apiKey = document.getElementById('apiKey').value.trim();
-        if (!apiKey) {
-            alert('Veuillez saisir votre clé API Anthropic avant de générer la fiche.');
-            btn.disabled = false;
-            btn.classList.remove('loading');
-            return;
-        }
-
-        // Ancres thématiques par motif
-        const motifAnchors = {
-            "Bavardages / Perturbation": "Le bavardage a interrompu le cours et volé du temps de concentration au groupe. La tâche doit quantifier ou matérialiser cet impact collectif.",
-            "Insolence / Manque de respect": "Des mots blessants ou un ton irrespectueux ont été utilisés envers un adulte. La tâche doit travailler la reformulation, la puissance des mots et la relation d'autorité.",
-            "Oubli de matériel répété": "L'élève arrive sans le matériel nécessaire, bloquant son propre apprentissage. La tâche doit produire un outil concret d'organisation personnelle.",
-            "Usage du téléphone": "Le téléphone a été utilisé en classe malgré l'interdiction. La tâche doit explorer pourquoi cette règle existe et ce que l'élève rate quand il décroche.",
-            "Refus de travail": "L'élève a refusé de s'engager dans l'activité proposée. La tâche doit connecter ce refus à ses conséquences réelles sur ses apprentissages et son avenir.",
-            "Dégradation / Manque de soin": "Du matériel ou un espace collectif a été abîmé. La tâche doit rendre visible le travail et le coût invisible derrière les objets du quotidien scolaire.",
-            "Retard injustifié": "L'élève est arrivé en retard, perturbant la classe. La tâche doit explorer la ponctualité comme compétence sociale et professionnelle.",
-            "Non-respect des règles de sécurité": "Un comportement dangereux a mis en risque l'élève ou ses camarades. La tâche doit visualiser concrètement les conséquences possibles.",
-            "Triche / Plagiat": "L'élève a trompé l'évaluation. La tâche doit travailler sur l'intégrité intellectuelle et ce qu'on perd vraiment en trichant.",
-            "Violence verbale envers un camarade": "Des propos blessants ont été adressés à un pair. La tâche doit se placer du côté de la victime et travailler l'impact des mots.",
-            "Comportement perturbateur en EPS": "Le comportement a nui à la sécurité ou au bon déroulement de l'activité collective. La tâche doit lier les règles du sport aux règles de vie.",
-            "Refus d'obtempérer": "L'élève a ignoré une consigne d'adulte. La tâche doit explorer la différence entre contester intelligemment et refuser par principe."
-        };
-        const anchor = motifAnchors[motif] || `Le comportement (${motif}) a eu un impact sur le cadre d'apprentissage. La tâche doit en partir directement.`;
-
-        const errorBanner = document.getElementById('errorBanner');
-        errorBanner.style.display = 'none';
-
-        // Call Claude API
-        const prompt = `Tu es un éducateur spécialisé en sanctions réparatrices dans un collège français.
-
-INCIDENT :
-- Élève : ${name}, classe de ${level}
-- Matière : ${subject}
-- Motif : ${motif}
-${context ? `- Contexte précis : ${context}` : ''}
-
-ANCRE THÉMATIQUE (point de départ obligatoire de toutes tes consignes) :
-${anchor}
-
-Génère 3 consignes qui partent toutes de cette ancre. Si quelqu'un lit la fiche sans voir le motif, il doit pouvoir le deviner.
-
-Réponds UNIQUEMENT en JSON valide, sans markdown ni texte autour :
-
-{
-  "intro1": "Consigne d'analyse : demande à l'élève de décrire précisément ce qui s'est passé en lien direct avec l'ancre — le moment exact du dérapage, ce qu'ont ressenti les personnes impactées. Pas de généralité. Tutoyement. 1-2 phrases.",
-  "intro2": "1 phrase d'amorce annonçant la tâche créative.",
-  "task": "Tâche créative ancrée dans '${motif}' — commence par une situation concrète liée au motif, puis utilise un format original : calcul d'impact chiffré, réécriture de scène avec un seul choix différent, micro-interview fictive 3 questions/réponses, lettre à la personne impactée, plaidoyer puis démontage honnête, mise en perspective dans un métier lié à ${subject}. Impossible à recycler pour un autre motif. Tutoyement. 4-6 phrases.",
-  "intro3": "Question d'engagement ultra-précise sur CE motif — ex: 'La prochaine fois que tu sens l'envie de [action liée au motif], que feras-tu exactement dans les 3 secondes qui suivent ?' Tutoyement. 1-2 phrases."
-}`;
-
-        try {
-            const response = await fetch("https://api.anthropic.com/v1/messages", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": apiKey,
-                    "anthropic-version": "2023-06-01",
-                    "anthropic-dangerous-direct-browser-access": "true"
-                },
-                body: JSON.stringify({
-                    model: "claude-sonnet-4-20250514",
-                    max_tokens: 1200,
-                    messages: [{ role: "user", content: prompt }]
-                })
-            });
-
-            if (!response.ok) {
-                const errBody = await response.text();
-                throw new Error(`HTTP ${response.status} — ${errBody}`);
-            }
-
-            const data = await response.json();
-            const raw = data.content?.[0]?.text?.trim() ?? null;
-            if (!raw) throw new Error('Réponse vide de l\'API');
-
-            let parsed;
-            try {
-                parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
-            } catch (jsonErr) {
-                throw new Error(`JSON invalide reçu : ${raw.slice(0, 200)}`);
-            }
-
-            document.getElementById('outIntro1').textContent = parsed.intro1 ?? '';
-            document.getElementById('outIntro2').textContent = parsed.intro2 ?? '';
-            document.getElementById('outTask').textContent   = parsed.task   ?? '';
-            document.getElementById('outIntro3').textContent = parsed.intro3 ?? '';
-
-        } catch (e) {
-            errorBanner.style.display = 'block';
-            errorBanner.textContent = '⚠ Erreur API : ' + e.message;
-            document.getElementById('outIntro1').textContent = "Décris précisément le moment exact où tu as fait le mauvais choix, et ce que ressentaient les personnes autour de toi :";
-            document.getElementById('outIntro2').textContent = "Voici un exercice pour mesurer l'impact de ce qui s'est passé :";
-            document.getElementById('outTask').textContent   = "Réécris la scène depuis le début en changeant une seule décision clé. Décris ce qui aurait été différent pour toi et pour les autres.";
-            document.getElementById('outIntro3').textContent = "La prochaine fois que tu te retrouves dans une situation similaire, quelle règle personnelle précise vas-tu appliquer dans les premières secondes ?";
-        }
-
-        btn.disabled = false;
-        btn.classList.remove('loading');
-    }
-
-    function resetForm() {
-        document.getElementById('printArea').style.display = 'none';
-        document.getElementById('studentName').value = '';
-        document.getElementById('teacherName').value = '';
-        document.getElementById('context').value = '';
-        document.getElementById('incidentDate').value = new Date().toISOString().split('T')[0];
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+})();
 </script>
-
 </body>
 </html>
