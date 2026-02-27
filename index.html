@@ -3,1106 +3,1179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travaux Réparateurs · Générateur IA</title>
+    <title>Travaux Réparateurs · Collège</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-deep: #0e2233;
-            --bg-card: rgba(255,255,255,0.07);
-            --accent: #5bc8f5;
-            --accent-warm: #ffb84d;
-            --accent-green: #5be5b0;
-            --accent-red: #ff6b6b;
-            --text-primary: #e8f4fa;
-            --text-muted: #7fb8d4;
-            --glass-border: rgba(255,255,255,0.12);
-            --card-bg: #f5fbff;
-            --card-shadow: 0 20px 40px -10px rgba(0,0,0,0.55);
-        }
+    :root {
+        --bg: #0d1f2d;
+        --accent: #4ec9f0;
+        --accent2: #52dba8;
+        --accent3: #ffb84d;
+        --text: #e4f2f9;
+        --muted: #6fa8c4;
+        --glass: rgba(255,255,255,0.07);
+        --border: rgba(255,255,255,0.11);
+        --card: #f4fbff;
+        --shadow: 0 18px 40px -8px rgba(0,0,0,0.55);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);font-family:'DM Sans',sans-serif;min-height:100vh;padding:1.5rem 1rem 3rem;overflow-x:hidden;position:relative;}
+    body::before{content:'';position:fixed;width:700px;height:700px;background:radial-gradient(circle,#0d5a87 0%,transparent 65%);top:-300px;left:-250px;opacity:.16;border-radius:50%;pointer-events:none;z-index:0;filter:blur(60px);}
+    body::after{content:'';position:fixed;width:500px;height:500px;background:radial-gradient(circle,#064a30 0%,transparent 65%);bottom:-200px;right:-150px;opacity:.18;border-radius:50%;pointer-events:none;z-index:0;filter:blur(60px);}
+    .wrap{max-width:1340px;margin:0 auto;position:relative;z-index:1;}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* HEADER */
+    .header{margin-bottom:1.8rem;}
+    .header-row{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:.6rem;}
+    h1{font-family:'Syne',sans-serif;font-size:clamp(1.7rem,4vw,2.7rem);font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1.1;}
+    h1 .chip{display:inline-block;background:var(--accent);color:#0d1f2d;font-size:.7em;font-weight:700;padding:.15em .8em;border-radius:40px;vertical-align:middle;margin-left:.4em;letter-spacing:0;}
+    .tagline{color:var(--muted);font-size:1rem;border-left:3px solid var(--accent);padding-left:.9rem;margin-top:.4rem;}
 
-        body {
-            background: var(--bg-deep);
-            min-height: 100vh;
-            font-family: 'DM Sans', sans-serif;
-            padding: 1.5rem 1rem 3rem;
-            position: relative;
-            overflow-x: hidden;
-        }
+    /* AI TOGGLE */
+    .ai-toggle{display:flex;align-items:center;gap:.6rem;background:rgba(78,201,240,.1);border:1px solid rgba(78,201,240,.25);border-radius:50px;padding:.45rem 1rem;cursor:pointer;transition:background .2s;user-select:none;white-space:nowrap;flex-shrink:0;}
+    .ai-toggle:hover{background:rgba(78,201,240,.18);}
+    .ai-toggle .lbl{color:var(--accent);font-size:.88rem;font-weight:500;}
+    .pill{width:34px;height:19px;background:rgba(255,255,255,.15);border-radius:50px;position:relative;transition:background .2s;flex-shrink:0;}
+    .pill::after{content:'';position:absolute;width:13px;height:13px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform .2s;}
+    .pill.on{background:var(--accent);}
+    .pill.on::after{transform:translateX(15px);}
 
-        /* Background decorative blobs */
-        body::before, body::after {
-            content: '';
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.18;
-            pointer-events: none;
-            z-index: 0;
-        }
-        body::before {
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, #1a6fa0, transparent 70%);
-            top: -200px; left: -200px;
-        }
-        body::after {
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, #0a4a2e, transparent 70%);
-            bottom: -150px; right: -150px;
-        }
+    /* CONFIG PANEL */
+    .config-panel{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:1rem;margin-bottom:1.4rem;}
+    .field-group{background:rgba(10,28,42,.7);border:1px solid var(--border);border-radius:20px;padding:1rem 1.2rem;}
+    .field-group label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:.55rem;}
+    .field-group input,.field-group select{width:100%;padding:.65rem 1rem;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;color:#1e3b47;background:#eaf6fd;border:2px solid #8fc9e3;border-radius:50px;outline:none;appearance:none;transition:all .2s;}
+    .field-group select{padding-right:2.5rem;background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e3b47' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");background-repeat:no-repeat;background-position:right .9rem center;background-size:.9rem;background-color:#eaf6fd;cursor:pointer;}
+    .field-group input::placeholder{color:#8ab8cc;}
+    .field-group input:focus,.field-group select:focus{border-color:var(--accent3);box-shadow:0 0 0 3px rgba(255,184,77,.22);}
+    .field-group input:hover,.field-group select:hover{background:#fff;border-color:#b2e2fa;}
 
-        .wrapper {
-            max-width: 1320px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
+    /* AI CONTEXT */
+    .ctx-zone{margin-bottom:1.4rem;display:none;}
+    .ctx-zone.show{display:block;}
+    .ctx-zone label{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--muted);display:block;margin-bottom:.5rem;}
+    .ctx-zone textarea{width:100%;padding:.8rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:.92rem;color:#1e3b47;background:#eaf6fd;border:2px solid #8fc9e3;border-radius:18px;resize:vertical;min-height:66px;outline:none;transition:all .2s;}
+    .ctx-zone textarea:focus{border-color:var(--accent3);box-shadow:0 0 0 3px rgba(255,184,77,.22);}
+    .ctx-zone textarea::placeholder{color:#7fa8bb;}
 
-        /* HEADER */
-        .header {
-            margin-bottom: 2rem;
-        }
+    /* API KEY ZONE */
+    .apikey-zone{margin-bottom:1.4rem;display:none;}
+    .apikey-zone.show{display:block;}
+    .apikey-banner{display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;background:rgba(10,28,42,.8);border:1px solid rgba(78,201,240,.3);border-radius:20px;padding:1.1rem 1.4rem;}
+    .apikey-banner .ak-icon{font-size:1.4rem;flex-shrink:0;margin-top:.1rem;}
+    .apikey-banner .ak-body{flex:1;min-width:220px;}
+    .apikey-banner .ak-title{font-size:.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.3rem;}
+    .apikey-banner .ak-desc{font-size:.82rem;color:var(--muted);margin-bottom:.75rem;line-height:1.4;}
+    .apikey-banner .ak-desc a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;}
+    .ak-input-row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap;}
+    .ak-input-row input{flex:1;min-width:200px;padding:.6rem 1rem;font-family:'DM Sans',sans-serif;font-size:.9rem;color:#1e3b47;background:#eaf6fd;border:2px solid #8fc9e3;border-radius:50px;outline:none;transition:all .2s;letter-spacing:.5px;}
+    .ak-input-row input:focus{border-color:var(--accent3);box-shadow:0 0 0 3px rgba(255,184,77,.22);}
+    .ak-input-row input::placeholder{color:#8ab8cc;letter-spacing:0;}
+    .ak-save{padding:.55rem 1.2rem;background:var(--accent);color:#0d1f2d;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:all .15s;white-space:nowrap;}
+    .ak-save:hover{background:#7dd8f7;}
+    .ak-status{font-size:.78rem;margin-top:.5rem;min-height:1rem;}
+    .ak-status.ok{color:var(--accent2);}
+    .ak-status.err{color:#ff8080;}
+    .ak-warn{font-size:.75rem;color:#ffb84d;margin-top:.5rem;display:none;}
+    .ak-warn.show{display:block;}
 
-        .header-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 0.75rem;
-        }
+    /* STATUS */
+    .status{text-align:center;margin-bottom:.9rem;min-height:1.4rem;}
+    .status-badge{display:inline-flex;align-items:center;gap:.45rem;background:rgba(10,28,42,.75);border:1px solid var(--border);border-radius:50px;padding:.4rem 1.2rem;font-size:.9rem;color:var(--text);font-weight:500;}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+    .dot.pulse{animation:dpulse .9s infinite;}
+    @keyframes dpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
 
-        h1 {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            font-weight: 800;
-            color: var(--text-primary);
-            letter-spacing: -1px;
-            line-height: 1.1;
-        }
+    /* CARDS */
+    .grid{display:flex;flex-wrap:wrap;gap:1.1rem;margin-bottom:1.5rem;}
+    .carte{flex:1 1 290px;background:var(--card);border-radius:26px;padding:1.4rem;box-shadow:var(--shadow);border:1px solid rgba(180,220,240,.8);display:flex;flex-direction:column;transition:transform .25s,box-shadow .25s;position:relative;overflow:hidden;}
+    .carte:hover{transform:translateY(-5px);box-shadow:0 28px 50px -10px rgba(0,0,0,.6);}
+    .carte.c1{border-top:4px solid var(--accent);}
+    .carte.c2{border-top:4px solid var(--accent2);}
+    .carte.c3{border-top:4px solid var(--accent3);}
+    .carte.loading::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(78,201,240,.14) 50%,transparent 100%);background-size:200% 100%;animation:shim 1.1s infinite;border-radius:inherit;z-index:10;}
+    @keyframes shim{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    .cat-badge{font-family:'Syne',sans-serif;font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:.28rem .9rem;border-radius:30px;align-self:flex-start;margin-bottom:.8rem;}
+    .c1 .cat-badge{background:#d4f0fb;color:#0a5a78;}
+    .c2 .cat-badge{background:#d0f7e8;color:#0a5a3c;}
+    .c3 .cat-badge{background:#ffeacc;color:#7a4200;}
+    .ai-tag{display:none;font-size:.7rem;font-weight:600;background:linear-gradient(135deg,#4ec9f0,#52dba8);color:#0a2233;padding:.15rem .65rem;border-radius:20px;align-self:flex-start;margin-bottom:.55rem;letter-spacing:.2px;}
+    .ai-on .ai-tag{display:inline-block;}
+    .m-tag{font-size:.78rem;background:#ddf0f9;color:#1e5e7a;padding:.25rem .85rem;border-radius:30px;margin-bottom:.8rem;font-weight:600;border:1px solid #aad9ef;display:inline-block;align-self:flex-start;}
+    .pun-text{font-size:1rem;line-height:1.55;color:#143e4f;font-weight:500;flex-grow:1;border-bottom:2px dotted #b2d4e8;padding-bottom:.85rem;margin-bottom:.85rem;min-height:90px;}
+    .obj-box{font-size:.85rem;color:#1e6f8f;background:#e3f2fa;border-radius:14px;padding:.55rem .85rem;border:1px solid #b2e2fa;margin-bottom:.85rem;line-height:1.4;}
+    .obj-box strong{color:#0f475e;}
+    .card-foot{display:flex;align-items:center;justify-content:space-between;gap:.4rem;flex-wrap:wrap;}
+    .duree{display:inline-flex;align-items:center;gap:.3rem;background:#ffd966;color:#1e4a5f;font-size:.8rem;font-weight:700;padding:.28rem .75rem;border-radius:30px;}
+    .card-btns{display:flex;gap:.35rem;}
+    .ibtn{width:30px;height:30px;border-radius:50%;border:1px solid #b2d4e8;background:#fff;color:#1e5a75;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+    .ibtn:hover{background:#e3f2fa;border-color:var(--accent);transform:scale(1.12);}
+    .ibtn.ok{background:#d0f7e8;border-color:var(--accent2);color:#0a5a3c;}
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+    .spinning{animation:spin .7s linear infinite;}
+    @keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .carte.anim{animation:cardIn .4s cubic-bezier(.16,1,.3,1) both;}
+    .carte:nth-child(1).anim{animation-delay:0s}
+    .carte:nth-child(2).anim{animation-delay:.07s}
+    .carte:nth-child(3).anim{animation-delay:.14s}
 
-        h1 .chip {
-            display: inline-block;
-            background: var(--accent);
-            color: var(--bg-deep);
-            font-size: 0.75em;
-            font-weight: 700;
-            padding: 0.15em 0.8em;
-            border-radius: 40px;
-            vertical-align: middle;
-            margin-left: 0.4em;
-            letter-spacing: 0;
-        }
+    /* BUTTONS */
+    .actions{display:flex;flex-wrap:wrap;gap:.9rem;justify-content:center;margin-bottom:1.5rem;}
+    .btn{font-family:'DM Sans',sans-serif;font-weight:700;font-size:1rem;padding:.85rem 2rem;border-radius:60px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.45rem;transition:all .18s;box-shadow:0 7px 18px -4px rgba(0,0,0,.4);}
+    .btn-gen{background:var(--accent);color:#0d1f2d;border-bottom:4px solid #2194bb;}
+    .btn-gen:hover{background:#7dd8f7;transform:scale(1.03);border-bottom-width:2px;}
+    .btn-gen:active{transform:scale(.98);}
+    .btn-gen:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+    .btn-print{background:rgba(255,255,255,.9);color:#1e3b47;border-bottom:4px solid #b2d4e8;}
+    .btn-print:hover{background:#fff;border-bottom-width:2px;transform:scale(1.02);}
+    .btn-rst{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--border);border-bottom:4px solid rgba(0,0,0,.3);box-shadow:none;}
+    .btn-rst:hover{background:rgba(255,255,255,.15);border-bottom-width:2px;}
+    .footer-mention{text-align:center;color:var(--muted);font-size:.85rem;border-top:1px dashed rgba(180,220,240,.12);padding-top:1.2rem;}
 
-        .tagline {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            border-left: 3px solid var(--accent);
-            padding-left: 0.9rem;
-        }
+    /* ============================================================
+       PRINT SHEET
+    ============================================================ */
+    .print-sheet{display:none;}
 
-        /* TOGGLE AI */
-        .ai-toggle-zone {
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            background: rgba(91,200,245,0.1);
-            border: 1px solid rgba(91,200,245,0.25);
-            border-radius: 50px;
-            padding: 0.5rem 1.1rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
-            white-space: nowrap;
-        }
-        .ai-toggle-zone:hover { background: rgba(91,200,245,0.18); }
-        .ai-toggle-zone .ai-icon { font-size: 1.2rem; }
-        .ai-label { color: var(--accent); font-size: 0.9rem; font-weight: 500; }
+    @media print {
+        body{background:#fff;padding:0;font-family:'DM Sans',sans-serif;}
+        body::before,body::after{display:none;}
+        .wrap>*:not(.print-sheet){display:none!important;}
+        .print-sheet{display:block!important;}
 
-        .toggle-pill {
-            width: 36px; height: 20px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 50px;
-            position: relative;
-            transition: background 0.2s;
-            flex-shrink: 0;
-        }
-        .toggle-pill::after {
-            content: '';
-            position: absolute;
-            width: 14px; height: 14px;
-            background: white;
-            border-radius: 50%;
-            top: 3px; left: 3px;
-            transition: transform 0.2s;
-        }
-        .toggle-pill.on { background: var(--accent); }
-        .toggle-pill.on::after { transform: translateX(16px); }
+        .ps-doc{width:100%;max-width:210mm;margin:0 auto;padding:12mm 15mm;font-size:10pt;color:#111;line-height:1.5;}
 
-        /* SELECTORS */
-        .selectors {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            margin-bottom: 1.8rem;
-        }
+        .ps-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1e4a5f;padding-bottom:5mm;margin-bottom:4mm;}
+        .ps-etab{font-size:11pt;font-weight:700;color:#1e4a5f;}
+        .ps-etab-sub{font-size:9pt;color:#555;margin-top:1mm;}
+        .ps-date-hd{text-align:right;font-size:9pt;color:#555;}
 
-        .sel-group {
-            flex: 1 1 200px;
-            background: rgba(10, 30, 45, 0.65);
-            border: 1px solid var(--glass-border);
-            border-radius: 22px;
-            padding: 1.1rem 1.4rem;
-        }
+        .ps-title{font-family:'Syne',sans-serif;font-size:15pt;font-weight:800;color:#1e4a5f;text-align:center;text-transform:uppercase;letter-spacing:1px;margin:0 0 4mm;}
 
-        .sel-label {
-            font-size: 0.72rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: var(--text-muted);
-            display: block;
-            margin-bottom: 0.7rem;
-        }
+        .ps-band{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3mm;background:#eaf6fd;border:1.5px solid #8fc9e3;border-radius:3mm;padding:3.5mm 5mm;margin-bottom:4mm;}
+        .ps-item .lbl{font-weight:700;color:#1e4a5f;font-size:8pt;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:.4mm;}
+        .ps-item .val{color:#111;font-size:10pt;}
 
-        select {
-            width: 100%;
-            padding: 0.75rem 2.8rem 0.75rem 1.1rem;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 1rem;
-            font-weight: 500;
-            color: #1e3b47;
-            background: #eaf6fd;
-            border: 2px solid #8fc9e3;
-            border-radius: 50px;
-            cursor: pointer;
-            outline: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231e3b47' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1rem;
-            transition: all 0.2s;
-        }
-        select:hover { background-color: #fff; border-color: #b2e2fa; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        select:focus { border-color: var(--accent-warm); box-shadow: 0 0 0 3px rgba(255,184,77,0.25); }
+        .ps-intro{background:#fff8ed;border-left:4px solid #ffb84d;padding:3mm 5mm;border-radius:0 2mm 2mm 0;font-size:9pt;color:#5a3800;margin-bottom:4mm;}
 
-        /* CONTEXT PROMPT (AI mode) */
-        .context-zone {
-            margin-bottom: 1.8rem;
-            display: none;
-        }
-        .context-zone.visible { display: block; }
-        .context-zone label {
-            font-size: 0.72rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: var(--text-muted);
-            display: block;
-            margin-bottom: 0.6rem;
-        }
-        .context-zone textarea {
-            width: 100%;
-            padding: 0.9rem 1.2rem;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.95rem;
-            color: #1e3b47;
-            background: #eaf6fd;
-            border: 2px solid #8fc9e3;
-            border-radius: 18px;
-            resize: vertical;
-            min-height: 70px;
-            outline: none;
-            transition: all 0.2s;
-        }
-        .context-zone textarea:focus { border-color: var(--accent-warm); box-shadow: 0 0 0 3px rgba(255,184,77,0.25); }
-        .context-zone textarea::placeholder { color: #7fa8bb; }
+        .ps-trav-title{font-size:11pt;font-weight:700;color:#1e4a5f;border-bottom:1px solid #cde8f4;padding-bottom:2mm;margin-bottom:3mm;}
 
-        /* CARDS */
-        .cards-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.2rem;
-            margin-bottom: 1.8rem;
-        }
+        .ps-trav{border:1.5px solid #b2d4e8;border-radius:3mm;margin-bottom:3.5mm;overflow:hidden;page-break-inside:avoid;}
+        .ps-trav-head{display:flex;align-items:center;gap:3mm;background:#1e4a5f;padding:2.5mm 5mm;}
+        .ps-trav-num{width:5.5mm;height:5.5mm;background:#fff;color:#1e4a5f;border-radius:50%;font-weight:800;font-size:9pt;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .ps-trav-cat{color:#fff;font-weight:700;font-size:9pt;letter-spacing:.3px;flex-grow:1;}
+        .ps-trav-dur{color:#ffd966;font-size:8.5pt;font-weight:700;}
+        .ps-trav-body{padding:3mm 5mm;}
+        .ps-trav-desc{font-size:9.5pt;color:#111;margin-bottom:2mm;line-height:1.5;}
+        .ps-obj{font-size:8.5pt;color:#1e6f8f;background:#e3f2fa;border-radius:2mm;padding:1.8mm 3.5mm;border:1px solid #b2e2fa;}
+        .ps-obj strong{color:#0f475e;}
 
-        .carte {
-            flex: 1 1 300px;
-            background: var(--card-bg);
-            border-radius: 28px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            border: 1px solid rgba(180,220,240,0.8);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            transition: transform 0.25s, box-shadow 0.25s;
-            overflow: hidden;
-        }
-        .carte:hover { transform: translateY(-5px); box-shadow: 0 28px 50px -10px rgba(0,0,0,0.6); }
+        .ps-sign{margin-top:5mm;display:grid;grid-template-columns:1fr 1fr;gap:5mm;page-break-inside:avoid;}
+        .ps-sign-box{border:1px solid #cde8f4;border-radius:2mm;padding:3mm 4mm;min-height:18mm;}
+        .ps-sign-box .sig-lbl{font-size:8pt;font-weight:700;color:#1e4a5f;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2mm;display:block;}
+        .ps-sign-line{border-bottom:1px solid #8fc9e3;margin:3.5mm 0 2mm;height:7mm;}
 
-        /* Category color accents */
-        .carte.c1 { border-top: 4px solid #5bc8f5; }
-        .carte.c2 { border-top: 4px solid #5be5b0; }
-        .carte.c3 { border-top: 4px solid #ffb84d; }
-
-        /* Shimmer overlay for loading */
-        .carte.loading::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent 0%, rgba(91,200,245,0.15) 50%, transparent 100%);
-            background-size: 200% 100%;
-            animation: shimmer 1.2s infinite;
-            border-radius: inherit;
-            z-index: 10;
-        }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-
-        .cat-badge {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            margin-bottom: 0.9rem;
-            align-self: flex-start;
-            border: none;
-        }
-        .c1 .cat-badge { background: #d4f0fb; color: #0a5a78; }
-        .c2 .cat-badge { background: #d0f7e8; color: #0a5a3c; }
-        .c3 .cat-badge { background: #ffeacc; color: #7a4200; }
-
-        .matiere-tag {
-            font-size: 0.8rem;
-            background: #ddf0f9;
-            color: #1e5e7a;
-            padding: 0.3rem 0.9rem;
-            border-radius: 30px;
-            margin-bottom: 0.9rem;
-            font-weight: 600;
-            border: 1px solid #aad9ef;
-            display: inline-block;
-            align-self: flex-start;
-        }
-
-        .pun-text {
-            font-size: 1.05rem;
-            line-height: 1.55;
-            color: #143e4f;
-            font-weight: 500;
-            flex-grow: 1;
-            border-bottom: 2px dotted #b2d4e8;
-            padding-bottom: 1rem;
-            margin-bottom: 0.9rem;
-            min-height: 100px;
-        }
-
-        .obj-box {
-            font-size: 0.88rem;
-            color: #1e6f8f;
-            background: #e3f2fa;
-            border-radius: 16px;
-            padding: 0.65rem 0.9rem;
-            border: 1px solid #b2e2fa;
-            margin-bottom: 0.9rem;
-            line-height: 1.4;
-        }
-        .obj-box strong { color: #0f475e; }
-
-        .card-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .duree-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: #ffd966;
-            color: #1e4a5f;
-            font-size: 0.82rem;
-            font-weight: 700;
-            padding: 0.3rem 0.8rem;
-            border-radius: 30px;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 0.4rem;
-        }
-
-        .icon-btn {
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            border: 1px solid #b2d4e8;
-            background: white;
-            color: #1e5a75;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-            flex-shrink: 0;
-        }
-        .icon-btn:hover { background: #e3f2fa; border-color: #5bc8f5; transform: scale(1.1); }
-        .icon-btn.copied { background: #d0f7e8; border-color: #5be5b0; color: #0a5a3c; }
-
-        /* BUTTONS */
-        .actions-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .btn {
-            font-family: 'DM Sans', sans-serif;
-            font-weight: 700;
-            font-size: 1.05rem;
-            padding: 0.9rem 2.2rem;
-            border-radius: 60px;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.18s;
-            box-shadow: 0 8px 20px -5px rgba(0,0,0,0.4);
-        }
-
-        .btn-generate {
-            background: var(--accent);
-            color: var(--bg-deep);
-            border-bottom: 4px solid #2a9ac4;
-        }
-        .btn-generate:hover { background: #7dd8f7; transform: scale(1.03); border-bottom-width: 2px; }
-        .btn-generate:active { transform: scale(0.98); }
-        .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-        .btn-print {
-            background: rgba(255,255,255,0.9);
-            color: #1e3b47;
-            border-bottom: 4px solid #b2d4e8;
-        }
-        .btn-print:hover { background: #fff; border-bottom-width: 2px; transform: scale(1.02); }
-
-        .btn-reset {
-            background: rgba(255,255,255,0.1);
-            color: var(--text-primary);
-            border: 1px solid var(--glass-border);
-            border-bottom: 4px solid rgba(0,0,0,0.3);
-            box-shadow: none;
-        }
-        .btn-reset:hover { background: rgba(255,255,255,0.18); border-bottom-width: 2px; }
-
-        /* STATUS BAR */
-        .status-bar {
-            text-align: center;
-            margin-bottom: 1rem;
-            min-height: 1.5rem;
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(10,30,45,0.7);
-            border: 1px solid var(--glass-border);
-            border-radius: 50px;
-            padding: 0.45rem 1.3rem;
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-        .status-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-            flex-shrink: 0;
-        }
-        .status-dot.loading {
-            animation: pulse-dot 0.9s infinite;
-        }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.7); }
-        }
-
-        /* FOOTER */
-        .footer {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.88rem;
-            padding-top: 1.5rem;
-            border-top: 1px dashed rgba(180,220,240,0.15);
-            margin-top: 1rem;
-        }
-
-        /* AI MODE badge on card */
-        .ai-generated-tag {
-            display: none;
-            font-size: 0.72rem;
-            font-weight: 600;
-            background: linear-gradient(135deg, #5bc8f5, #5be5b0);
-            color: #0a2233;
-            padding: 0.18rem 0.7rem;
-            border-radius: 20px;
-            align-self: flex-start;
-            margin-bottom: 0.6rem;
-            letter-spacing: 0.3px;
-        }
-        .ai-mode .ai-generated-tag { display: inline-block; }
-
-        /* Spin animation for regen button */
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .spinning { animation: spin 0.7s linear infinite; }
-
-        /* Card fade-in animation */
-        @keyframes cardIn {
-            from { opacity: 0; transform: translateY(16px) scale(0.97); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .carte.animated { animation: cardIn 0.4s cubic-bezier(0.16,1,0.3,1) both; }
-        .carte:nth-child(1).animated { animation-delay: 0s; }
-        .carte:nth-child(2).animated { animation-delay: 0.08s; }
-        .carte:nth-child(3).animated { animation-delay: 0.16s; }
-
-        /* PRINT STYLES */
-        @media print {
-            body { background: white; padding: 0; }
-            body::before, body::after { display: none; }
-            .header { margin-bottom: 1rem; }
-            h1, .tagline { color: #0e2233; }
-            .selectors, .actions-bar, .ai-toggle-zone, .context-zone, .status-bar, .footer, .card-actions, .icon-btn { display: none !important; }
-            .cards-grid { gap: 1rem; }
-            .carte { box-shadow: 0 2px 6px rgba(0,0,0,0.15); break-inside: avoid; }
-            .status-badge { color: #0e2233; border-color: #ccc; }
-        }
-
-        @media (max-width: 600px) {
-            .btn { padding: 0.8rem 1.4rem; font-size: 0.95rem; }
-        }
+        .ps-footer{margin-top:5mm;text-align:center;font-size:7.5pt;color:#888;border-top:1px solid #dde;padding-top:2.5mm;}
+    }
     </style>
 </head>
 <body>
-<div class="wrapper">
+<div class="wrap">
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="header-top">
-            <div>
-                <h1>📋 Travaux Réparateurs <span class="chip">IA</span></h1>
-                <p class="tagline" style="margin-top:0.5rem">Génère 3 travaux constructifs pour le collège · 30–45 min chacun</p>
-            </div>
-            <div class="ai-toggle-zone" id="aiToggle" title="Activer la génération par IA (Claude)">
-                <span class="ai-icon">🤖</span>
-                <span class="ai-label">Mode IA</span>
-                <div class="toggle-pill" id="togglePill"></div>
-            </div>
+<div class="header">
+    <div class="header-row">
+        <div>
+            <h1>📋 Travaux Réparateurs <span class="chip">Collège</span></h1>
+            <p class="tagline">Fiche individualisée · 6e–3e · 30–45 min par travail · Mode IA disponible</p>
         </div>
-    </div>
-
-    <!-- SELECTORS -->
-    <div class="selectors">
-        <div class="sel-group">
-            <span class="sel-label">📚 Matière</span>
-            <select id="matiereSelect">
-                <option value="maths">🔢 Mathématiques</option>
-                <option value="francais">📖 Français</option>
-                <option value="histgeo">🌍 Histoire-Géographie</option>
-                <option value="sciences">🔬 Sciences</option>
-                <option value="langue">💬 Langue vivante</option>
-                <option value="eps">🏃 EPS</option>
-                <option value="arts">🎨 Arts plastiques / Musique</option>
-                <option value="autre">🔄 Interdisciplinaire</option>
-            </select>
+        <div class="ai-toggle" id="aiToggle">
+            <span>🤖</span><span class="lbl">Mode IA</span>
+            <div class="pill" id="pill"></div>
         </div>
-        <div class="sel-group">
-            <span class="sel-label">⚠️ Situation</span>
-            <select id="fauteSelect">
-                <option value="bavardage">💬 Bavardage perturbateur</option>
-                <option value="oublie">📒 Oubli de matériel</option>
-                <option value="travail">✏️ Travail non fait</option>
-                <option value="pasrespect">🤝 Manque de respect</option>
-                <option value="decrochage">🌀 Passivité / décrochage</option>
-                <option value="telephone">📱 Usage du téléphone</option>
-                <option value="triche">👁️ Tentative de triche</option>
-                <option value="autre">🔄 Autre situation</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- AI CONTEXT (visible only in AI mode) -->
-    <div class="context-zone" id="contextZone">
-        <label>💡 Contexte supplémentaire (optionnel)</label>
-        <textarea id="contextInput" placeholder="Ex : L'élève a perturbé plusieurs fois la séquence sur les fractions. Il est en 5e, a tendance à l'humour de classe..."></textarea>
-    </div>
-
-    <!-- STATUS -->
-    <div class="status-bar">
-        <div class="status-badge" id="statusBadge">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">📌 Mathématiques · Collège · Bavardage perturbateur</span>
-        </div>
-    </div>
-
-    <!-- CARDS -->
-    <div class="cards-grid" id="cardsGrid">
-        <div class="carte c1 animated" id="carte1">
-            <div class="ai-generated-tag">✨ Généré par IA</div>
-            <div class="cat-badge">🔍 Comprendre & Analyser</div>
-            <div class="matiere-tag" id="matiere1">Mathématiques</div>
-            <div class="pun-text" id="pun1">Rédiger un problème de mathématiques original sur le chapitre en cours, avec correction détaillée et explications.</div>
-            <div class="obj-box" id="details1"><strong>Objectif :</strong> Approfondir sa compréhension en créant un exercice</div>
-            <div class="card-footer">
-                <span class="duree-badge" id="duree1">⏱️ 35–40 min</span>
-                <div class="card-actions">
-                    <button class="icon-btn" title="Copier ce travail" onclick="copyCard(1)">📋</button>
-                    <button class="icon-btn" id="regen1" title="Régénérer ce travail" onclick="regenCard(1)">🔄</button>
-                </div>
-            </div>
-        </div>
-        <div class="carte c2 animated" id="carte2">
-            <div class="ai-generated-tag">✨ Généré par IA</div>
-            <div class="cat-badge">🛠️ Réparer & Contribuer</div>
-            <div class="matiere-tag" id="matiere2">Mathématiques</div>
-            <div class="pun-text" id="pun2">Créer une fiche méthode illustrée sur une notion difficile du chapitre, avec 3 exemples commentés.</div>
-            <div class="obj-box" id="details2"><strong>Objectif :</strong> Structurer ses connaissances pour aider les autres</div>
-            <div class="card-footer">
-                <span class="duree-badge" id="duree2">⏱️ 35–40 min</span>
-                <div class="card-actions">
-                    <button class="icon-btn" title="Copier ce travail" onclick="copyCard(2)">📋</button>
-                    <button class="icon-btn" id="regen2" title="Régénérer ce travail" onclick="regenCard(2)">🔄</button>
-                </div>
-            </div>
-        </div>
-        <div class="carte c3 animated" id="carte3">
-            <div class="ai-generated-tag">✨ Généré par IA</div>
-            <div class="cat-badge">📈 Progresser & S'engager</div>
-            <div class="matiere-tag" id="matiere3">Mathématiques</div>
-            <div class="pun-text" id="pun3">Résoudre 12 exercices supplémentaires du manuel (niveaux variés) et rédiger un bilan des difficultés rencontrées.</div>
-            <div class="obj-box" id="details3"><strong>Objectif :</strong> Consolider ses compétences par la pratique</div>
-            <div class="card-footer">
-                <span class="duree-badge" id="duree3">⏱️ 35–40 min</span>
-                <div class="card-actions">
-                    <button class="icon-btn" title="Copier ce travail" onclick="copyCard(3)">📋</button>
-                    <button class="icon-btn" id="regen3" title="Régénérer ce travail" onclick="regenCard(3)">🔄</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ACTION BUTTONS -->
-    <div class="actions-bar">
-        <button class="btn btn-generate" id="btnGenerer">🎲 Générer les 3 travaux</button>
-        <button class="btn btn-print" onclick="window.print()">🖨️ Imprimer</button>
-        <button class="btn btn-reset" id="btnRemettre">↺ Réinitialiser</button>
-    </div>
-
-    <div class="footer">
-        ⚙️ Travaux de 30 à 45 minutes · Collège · Mode IA disponible
     </div>
 </div>
 
-<script>
-(function() {
+<!-- CONFIG -->
+<div class="config-panel">
+    <div class="field-group">
+        <label>👤 Prénom de l'élève</label>
+        <input type="text" id="prenomEleve" placeholder="Ex : Lucas" autocomplete="off">
+    </div>
+    <div class="field-group">
+        <label>👤 Nom de l'élève</label>
+        <input type="text" id="nomEleve" placeholder="Ex : Martin" autocomplete="off">
+    </div>
+    <div class="field-group">
+        <label>🏫 Classe</label>
+        <select id="classeSelect">
+            <option value="6e">6ème</option>
+            <option value="5e" selected>5ème</option>
+            <option value="4e">4ème</option>
+            <option value="3e">3ème</option>
+        </select>
+    </div>
+    <div class="field-group">
+        <label>📚 Matière</label>
+        <select id="matiereSelect">
+            <option value="maths">🔢 Mathématiques</option>
+            <option value="francais">📖 Français</option>
+            <option value="histgeo">🌍 Histoire-Géographie</option>
+            <option value="sciences">🔬 Sciences</option>
+            <option value="langue">💬 Langue vivante</option>
+            <option value="eps">🏃 EPS</option>
+            <option value="arts">🎨 Arts / Musique</option>
+            <option value="autre">🔄 Interdisciplinaire</option>
+        </select>
+    </div>
+    <div class="field-group">
+        <label>⚠️ Situation</label>
+        <select id="fauteSelect">
+            <option value="bavardage">💬 Bavardage</option>
+            <option value="oublie">📒 Oubli de matériel</option>
+            <option value="travail">✏️ Travail non fait</option>
+            <option value="pasrespect">🤝 Manque de respect</option>
+            <option value="decrochage">🌀 Passivité / décrochage</option>
+            <option value="telephone">📱 Usage du téléphone</option>
+            <option value="triche">👁️ Tentative de triche</option>
+            <option value="autre">🔄 Autre</option>
+        </select>
+    </div>
+    <div class="field-group">
+        <label>📅 Date du jour</label>
+        <input type="date" id="dateField">
+    </div>
+    <div class="field-group">
+        <label>🖊️ Professeur</label>
+        <input type="text" id="profField" placeholder="Ex : Mme Dupont" autocomplete="off">
+    </div>
+    <div class="field-group">
+        <label>📬 À rendre le</label>
+        <input type="date" id="dateRendu">
+    </div>
+</div>
 
-/* ===================== DATA BANK ===================== */
+<div class="apikey-zone" id="apikeyZone">
+    <div class="apikey-banner">
+        <div class="ak-icon">🔑</div>
+        <div class="ak-body">
+            <div class="ak-title">Clé API Anthropic — Mode IA</div>
+            <div class="ak-desc">
+                Pour utiliser l'IA sur GitHub Pages, entrez votre clé API personnelle.
+                Elle reste <strong>uniquement dans votre navigateur</strong>, jamais enregistrée ni transmise ailleurs.<br>
+                Obtenez une clé gratuite sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
+            </div>
+            <div class="ak-input-row">
+                <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-…" autocomplete="off" spellcheck="false">
+                <button class="ak-save" id="akSave">✓ Valider</button>
+            </div>
+            <div class="ak-status" id="akStatus"></div>
+            <div class="ak-warn" id="akWarn">⚠️ Aucune clé renseignée — les travaux seront générés depuis la banque locale.</div>
+        </div>
+    </div>
+</div>
+
+<div class="ctx-zone" id="ctxZone">
+    <label>💡 Contexte supplémentaire pour l'IA (optionnel)</label>
+    <textarea id="ctxInput" placeholder="Ex : L'élève a perturbé la séquence sur les fractions. Bon niveau global, tendance à l'humour de classe…"></textarea>
+</div>
+
+<div class="status">
+    <div class="status-badge">
+        <span class="dot" id="dot"></span>
+        <span id="statusTxt">📌 5ème · Mathématiques · Bavardage</span>
+    </div>
+</div>
+
+<!-- CARDS -->
+<div class="grid" id="grid">
+    <div class="carte c1 anim" id="carte1">
+        <div class="ai-tag">✨ Généré par IA</div>
+        <div class="cat-badge">🔍 Comprendre &amp; Analyser</div>
+        <div class="m-tag" id="mt1">Mathématiques</div>
+        <div class="pun-text" id="pun1">…</div>
+        <div class="obj-box" id="obj1"><strong>Objectif :</strong> …</div>
+        <div class="card-foot">
+            <span class="duree" id="dur1">⏱️ 35–40 min</span>
+            <div class="card-btns">
+                <button class="ibtn" title="Copier" onclick="copyCard(1)">📋</button>
+                <button class="ibtn" id="rb1" title="Régénérer" onclick="regenCard(1)">🔄</button>
+            </div>
+        </div>
+    </div>
+    <div class="carte c2 anim" id="carte2">
+        <div class="ai-tag">✨ Généré par IA</div>
+        <div class="cat-badge">🛠️ Réparer &amp; Contribuer</div>
+        <div class="m-tag" id="mt2">Mathématiques</div>
+        <div class="pun-text" id="pun2">…</div>
+        <div class="obj-box" id="obj2"><strong>Objectif :</strong> …</div>
+        <div class="card-foot">
+            <span class="duree" id="dur2">⏱️ 35–40 min</span>
+            <div class="card-btns">
+                <button class="ibtn" title="Copier" onclick="copyCard(2)">📋</button>
+                <button class="ibtn" id="rb2" title="Régénérer" onclick="regenCard(2)">🔄</button>
+            </div>
+        </div>
+    </div>
+    <div class="carte c3 anim" id="carte3">
+        <div class="ai-tag">✨ Généré par IA</div>
+        <div class="cat-badge">📈 Progresser &amp; S'engager</div>
+        <div class="m-tag" id="mt3">Mathématiques</div>
+        <div class="pun-text" id="pun3">…</div>
+        <div class="obj-box" id="obj3"><strong>Objectif :</strong> …</div>
+        <div class="card-foot">
+            <span class="duree" id="dur3">⏱️ 35–40 min</span>
+            <div class="card-btns">
+                <button class="ibtn" title="Copier" onclick="copyCard(3)">📋</button>
+                <button class="ibtn" id="rb3" title="Régénérer" onclick="regenCard(3)">🔄</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="actions">
+    <button class="btn btn-gen" id="btnGen">🎲 Générer les 3 travaux</button>
+    <button class="btn btn-print" id="btnPrint">🖨️ Imprimer la fiche élève</button>
+    <button class="btn btn-rst" id="btnRst">↺ Réinitialiser</button>
+</div>
+
+<div class="footer-mention">⚙️ Travaux de 30 à 45 min · Collège 6e–3e · Mode IA optionnel</div>
+
+<!-- ===================== PRINT SHEET ===================== -->
+<div class="print-sheet" id="printSheet">
+<div class="ps-doc">
+
+    <div class="ps-header">
+        <div>
+            <div class="ps-etab">Collège</div>
+            <div class="ps-etab-sub" id="ps-etab-sub">Travail réparateur individuel</div>
+        </div>
+        <div class="ps-date-hd" id="ps-date-hd"></div>
+    </div>
+
+    <div class="ps-title">Fiche de Travail Réparateur</div>
+
+    <div class="ps-band">
+        <div class="ps-item"><span class="lbl">Élève</span><span class="val" id="ps-nom"></span></div>
+        <div class="ps-item"><span class="lbl">Classe</span><span class="val" id="ps-classe"></span></div>
+        <div class="ps-item"><span class="lbl">Matière</span><span class="val" id="ps-matiere"></span></div>
+        <div class="ps-item"><span class="lbl">Situation</span><span class="val" id="ps-faute"></span></div>
+        <div class="ps-item"><span class="lbl">Professeur</span><span class="val" id="ps-prof"></span></div>
+        <div class="ps-item"><span class="lbl">À rendre le</span><span class="val" id="ps-rendu"></span></div>
+    </div>
+
+    <div class="ps-intro" id="ps-intro"></div>
+
+    <div class="ps-trav-title">📋 Travaux à réaliser</div>
+
+    <div class="ps-trav">
+        <div class="ps-trav-head">
+            <div class="ps-trav-num">1</div>
+            <div class="ps-trav-cat">🔍 Comprendre &amp; Analyser</div>
+            <div class="ps-trav-dur" id="ps-dur1"></div>
+        </div>
+        <div class="ps-trav-body">
+            <div class="ps-trav-desc" id="ps-pun1"></div>
+            <div class="ps-obj" id="ps-obj1"></div>
+        </div>
+    </div>
+
+    <div class="ps-trav">
+        <div class="ps-trav-head">
+            <div class="ps-trav-num">2</div>
+            <div class="ps-trav-cat">🛠️ Réparer &amp; Contribuer</div>
+            <div class="ps-trav-dur" id="ps-dur2"></div>
+        </div>
+        <div class="ps-trav-body">
+            <div class="ps-trav-desc" id="ps-pun2"></div>
+            <div class="ps-obj" id="ps-obj2"></div>
+        </div>
+    </div>
+
+    <div class="ps-trav">
+        <div class="ps-trav-head">
+            <div class="ps-trav-num">3</div>
+            <div class="ps-trav-cat">📈 Progresser &amp; S'engager</div>
+            <div class="ps-trav-dur" id="ps-dur3"></div>
+        </div>
+        <div class="ps-trav-body">
+            <div class="ps-trav-desc" id="ps-pun3"></div>
+            <div class="ps-obj" id="ps-obj3"></div>
+        </div>
+    </div>
+
+    <div class="ps-sign">
+        <div class="ps-sign-box">
+            <span class="sig-lbl">Signature du professeur</span>
+            <div class="ps-sign-line"></div>
+        </div>
+        <div class="ps-sign-box">
+            <span class="sig-lbl">Signature de l'élève (lu et accepté)</span>
+            <div class="ps-sign-line"></div>
+        </div>
+    </div>
+    <div class="ps-sign" style="margin-top:3mm">
+        <div class="ps-sign-box">
+            <span class="sig-lbl">Visa des parents / tuteurs légaux</span>
+            <div class="ps-sign-line"></div>
+        </div>
+        <div class="ps-sign-box" style="font-size:8.5pt;color:#555;padding-top:3mm;">
+            <em>Ce travail s'inscrit dans une démarche éducative constructive. Il n'est pas une sanction punitive mais une occasion de progresser, de réparer et de s'engager positivement.</em>
+        </div>
+    </div>
+
+    <div class="ps-footer" id="ps-footer"></div>
+</div>
+</div>
+
+</div>
+
+<script>
+(function(){
+/* =====================================================================
+   BANQUE DE DONNÉES PAR MATIÈRE ET PAR CLASSE
+===================================================================== */
 const banque = {
     maths: {
-        comprendre: [
-            "Rédiger un problème de mathématiques original sur le chapitre en cours, avec correction détaillée et explications.",
-            "Analyser 3 erreurs fréquentes dans le chapitre et expliquer pourquoi on les fait (avec schémas).",
-            "Créer un mini-cours de 20 lignes sur une notion, comme si on devait l'expliquer à un élève absent.",
-            "Démontrer une propriété vue en classe en rédigeant toutes les étapes de manière claire.",
-            "Chercher 3 applications concrètes des mathématiques dans la vie quotidienne en lien avec le chapitre.",
-            "Créer un exercice à choix multiples (10 questions) sur le chapitre, avec corrigé détaillé."
-        ],
-        reparer: [
-            "Créer une fiche méthode illustrée sur une notion difficile du chapitre, avec 3 exemples commentés.",
-            "Préparer un quiz de 10 questions (avec réponses) pour aider les camarades à réviser.",
-            "Réaliser une affiche expliquant une règle ou formule importante, avec des couleurs et des schémas.",
-            "Écrire 5 conseils pour éviter les erreurs de calcul les plus courantes dans le chapitre.",
-            "Créer un jeu de cartes (sur feuille) avec 10 questions/réponses sur le chapitre.",
-            "Concevoir une carte mentale du chapitre avec les définitions, théorèmes et exemples clés."
-        ],
-        progresser: [
-            "Résoudre 12 exercices supplémentaires du manuel (niveaux variés) et rédiger un bilan des difficultés.",
-            "Tenir un journal de bord pendant une semaine : noter chaque jour une notion comprise ou à retravailler.",
-            "Se fixer 3 objectifs précis pour le prochain chapitre et écrire comment les atteindre.",
-            "Refaire 6 exercices déjà corrigés en les expliquant étape par étape (comme un professeur).",
-            "Créer des flashcards sur les formules et définitions du chapitre (15 minimum).",
-            "Rédiger une auto-évaluation : ce que j'ai compris, ce qui pose encore problème, et comment y remédier."
-        ]
+        '6e': {
+            comprendre: [
+                "Rédiger un problème de mathématiques simple sur les nombres décimaux ou les fractions, avec sa correction entièrement rédigée pas à pas.",
+                "Expliquer en 15 lignes et avec des dessins ce que sont les fractions, comme si tu l'expliquais à un élève de CM2.",
+                "Créer un mini-dictionnaire de 10 mots mathématiques vus en classe, avec définition et exemple illustré pour chacun.",
+                "Chercher 3 situations de la vie quotidienne où on utilise les pourcentages ou les fractions et les expliquer clairement."
+            ],
+            reparer: [
+                "Concevoir une fiche de révision illustrée sur les priorités opératoires, avec 5 exemples résolus étape par étape.",
+                "Créer un jeu de 12 cartes question/réponse sur les tables de multiplication et les propriétés vues en cours.",
+                "Écrire 5 astuces pour ne plus faire d'erreurs de calcul, en donnant un exemple concret pour chaque astuce.",
+                "Réaliser une affiche expliquant comment poser et résoudre une division euclidienne, avec 3 exemples travaillés."
+            ],
+            progresser: [
+                "Résoudre 10 exercices de calcul mental (niveaux variés) et noter pour chacun la méthode utilisée.",
+                "Créer 15 flashcards sur les formules, définitions et propriétés du chapitre en cours.",
+                "Tenir un journal de maths pendant 3 jours : noter chaque jour une notion comprise et une question qui reste.",
+                "Refaire 5 exercices déjà corrigés en classe en expliquant chaque étape à l'écrit, comme un professeur."
+            ]
+        },
+        '5e': {
+            comprendre: [
+                "Rédiger un problème de proportionnalité original sur le chapitre en cours, avec correction détaillée et explications.",
+                "Analyser 3 erreurs fréquentes sur les fractions ou les angles, et expliquer pourquoi on les fait avec des schémas.",
+                "Créer un mini-cours de 20 lignes sur une notion du chapitre, comme si tu devais l'expliquer à un élève absent.",
+                "Démontrer une propriété géométrique vue en classe en rédigeant toutes les étapes clairement et en ordre."
+            ],
+            reparer: [
+                "Créer une fiche méthode illustrée sur le théorème de Pythagore ou la proportionnalité, avec 3 exemples commentés.",
+                "Préparer un quiz de 10 questions (avec réponses) pour aider les camarades à réviser le chapitre.",
+                "Réaliser une affiche expliquant une règle ou formule importante, avec des couleurs et des schémas clairs.",
+                "Concevoir une carte mentale du chapitre avec les définitions, théorèmes et exemples clés bien organisés."
+            ],
+            progresser: [
+                "Résoudre 12 exercices supplémentaires du manuel (niveaux variés) et rédiger un bilan des difficultés rencontrées.",
+                "Créer des flashcards sur les formules et définitions du chapitre (15 minimum).",
+                "Rédiger une auto-évaluation : ce que j'ai compris, ce qui pose encore problème, et comment y remédier.",
+                "Tenir un journal de bord mathématique pendant une semaine : noter chaque jour une notion travaillée."
+            ]
+        },
+        '4e': {
+            comprendre: [
+                "Rédiger un problème original mettant en jeu le théorème de Pythagore ou la trigonométrie, avec correction complète.",
+                "Analyser 3 erreurs classiques sur les équations du premier degré et expliquer comment les éviter avec méthode.",
+                "Créer un cours de 20 lignes sur les puissances ou la notation scientifique, illustré d'exemples concrets du quotidien.",
+                "Démontrer rigoureusement une propriété vue en classe (médiatrice, théorème…) en détaillant chaque étape et justification."
+            ],
+            reparer: [
+                "Créer une fiche méthode sur la résolution d'équations avec 4 types d'exemples progressifs, entièrement commentée.",
+                "Préparer un quiz de 12 questions (avec corrections) sur le chapitre pour permettre aux autres de bien réviser.",
+                "Réaliser une affiche synthétique sur les identités remarquables avec démonstrations et exemples numériques.",
+                "Concevoir une carte mentale du chapitre reliant définitions, théorèmes, formules et exemples de manière lisible."
+            ],
+            progresser: [
+                "Résoudre 12 exercices variés du manuel, puis rédiger un bilan honnête des points encore fragiles à travailler.",
+                "Refaire 6 exercices déjà corrigés en expliquant chaque étape comme si tu étais le professeur face à la classe.",
+                "Créer des flashcards sur les formules, théorèmes et définitions clés du chapitre (15 minimum).",
+                "Rédiger une auto-évaluation détaillée et proposer 3 actions concrètes pour progresser dans la matière."
+            ]
+        },
+        '3e': {
+            comprendre: [
+                "Rédiger un problème type brevet intégrant les notions du chapitre, avec barème et correction complète rédigée.",
+                "Analyser 3 erreurs typiques d'examen sur ce chapitre et rédiger un guide méthodologique pour les éviter.",
+                "Créer une synthèse du chapitre (25 lignes) articulant définitions, propriétés, méthodes et exemples applicables.",
+                "Rédiger une démonstration complète d'un théorème clé du programme, en justifiant rigoureusement chaque étape."
+            ],
+            reparer: [
+                "Créer un sujet de révision type brevet (exercice + correction barémée) sur le chapitre en cours.",
+                "Concevoir un support de révision complet (fiche recto-verso) pour l'ensemble de la classe avant une évaluation.",
+                "Réaliser une carte mentale générale du programme de 3e en mathématiques, centrée sur les notions du chapitre.",
+                "Réaliser un guide méthode 'anti-panique brevet' pour les 10 erreurs les plus fréquentes du chapitre."
+            ],
+            progresser: [
+                "Résoudre 3 exercices de niveau brevet chronométrés et rédiger un bilan précis des points à retravailler.",
+                "Créer un planning de révisions sur 3 semaines couvrant les chapitres clés du programme de 3e.",
+                "Refaire les exercices les plus difficiles du chapitre en détaillant chaque étape à l'écrit avec justifications.",
+                "Rédiger une auto-évaluation de ses compétences mathématiques sur l'ensemble du programme de 3e."
+            ]
+        }
     },
     francais: {
-        comprendre: [
-            "Rédiger une analyse littéraire de 25 lignes sur un texte étudié en classe, en relevant les figures de style.",
-            "Écrire une fiche de lecture détaillée sur le livre en cours d'étude (personnages, thèmes, passages clés).",
-            "Comparer deux textes du chapitre en relevant les similitudes et différences (fond et forme).",
-            "Expliquer en 20 lignes l'importance de la grammaire pour bien s'exprimer, avec des exemples.",
-            "Rechercher l'étymologie de 15 mots du texte étudié et expliquer comment elle éclaire leur sens.",
-            "Analyser la construction d'un poème étudié (mètres, rimes, images) et en proposer une interprétation."
-        ],
-        reparer: [
-            "Rédiger une saynète de théâtre (1 page) sur le thème du respect en classe, avec 2 personnages.",
-            "Créer un abécédaire du chapitre : pour chaque lettre, un mot important et sa définition.",
-            "Préparer une dictée de 15 lignes (inventée) utilisant les difficultés orthographiques vues en classe.",
-            "Écrire un poème de 15 vers sur l'importance de l'écoute et du silence pour apprendre.",
-            "Concevoir une affiche sur les 10 règles d'or de l'expression écrite (avec exemples).",
-            "Rédiger 5 règles de grammaire expliquées simplement, avec 3 exemples pour chacune."
-        ],
-        progresser: [
-            "Rédiger un texte de 25 lignes sans faute d'orthographe, sur un sujet libre, puis l'auto-corriger.",
-            "Apprendre 8 nouvelles règles d'orthographe et les expliquer avec des exemples personnels.",
-            "Tenir un carnet de vocabulaire : noter 20 nouveaux mots avec leur définition et une phrase d'exemple.",
-            "Créer des flashcards de conjugaison pour 8 verbes difficiles, à tous les temps étudiés.",
-            "Rédiger un journal de lecture pendant 3 jours : ses impressions sur le livre étudié.",
-            "Réécrire un passage d'un texte étudié à la première personne et expliquer les changements opérés."
-        ]
+        '6e': {
+            comprendre: [
+                "Rédiger une fiche de lecture sur le texte ou le livre étudié en classe (résumé, personnages, moments-clés bien décrits).",
+                "Expliquer en 15 lignes ce que sont les figures de style en donnant 5 exemples trouvés dans un texte du cours.",
+                "Créer un abécédaire du chapitre : pour 10 lettres, un mot important avec sa définition et un exemple personnel.",
+                "Chercher l'étymologie de 10 mots du texte étudié et expliquer comment ça éclaire leur sens aujourd'hui."
+            ],
+            reparer: [
+                "Écrire une courte histoire de 20 lignes en utilisant au moins 5 connecteurs logiques appris en classe.",
+                "Préparer une dictée de 10 lignes inventée qui utilise les difficultés orthographiques vues en cours.",
+                "Créer une affiche sur les 8 règles d'or de l'expression écrite, avec exemples illustrés et colorés.",
+                "Rédiger 5 règles de grammaire expliquées simplement, avec 2 exemples personnels pour chacune."
+            ],
+            progresser: [
+                "Rédiger un texte de 20 lignes sans faute d'orthographe sur un sujet libre, puis s'auto-corriger en couleurs.",
+                "Tenir un carnet de vocabulaire : noter 15 nouveaux mots avec définition, nature grammaticale et phrase d'exemple.",
+                "Créer des flashcards de conjugaison pour 6 verbes difficiles à tous les temps et modes étudiés.",
+                "Apprendre 6 règles d'orthographe et les illustrer avec des exemples personnels variés."
+            ]
+        },
+        '5e': {
+            comprendre: [
+                "Rédiger une analyse littéraire de 20 lignes sur un texte étudié en classe, en relevant les figures de style.",
+                "Écrire une fiche de lecture détaillée sur le livre en cours d'étude (personnages, thèmes, passages clés).",
+                "Analyser la construction d'un poème étudié (mètres, rimes, images) et proposer une interprétation personnelle.",
+                "Expliquer en 20 lignes l'importance de la grammaire pour bien s'exprimer, avec des exemples tirés du cours."
+            ],
+            reparer: [
+                "Rédiger une saynète de théâtre (1 page) sur le thème du respect en classe, avec 2 personnages et des didascalies.",
+                "Écrire un poème de 15 vers sur l'importance de l'écoute et du silence pour apprendre ensemble.",
+                "Préparer une dictée de 15 lignes (inventée) utilisant les difficultés orthographiques vues en classe.",
+                "Rédiger 5 règles de grammaire expliquées simplement, avec 3 exemples illustrés pour chacune."
+            ],
+            progresser: [
+                "Rédiger un texte de 25 lignes sans faute d'orthographe, puis s'auto-corriger en surlignant les corrections.",
+                "Tenir un carnet de vocabulaire : noter 20 nouveaux mots avec définition et phrase d'exemple originale.",
+                "Créer des flashcards de conjugaison pour 8 verbes difficiles, à tous les temps et modes étudiés.",
+                "Rédiger un journal de lecture pendant 3 jours : noter ses impressions et questions sur le livre étudié."
+            ]
+        },
+        '4e': {
+            comprendre: [
+                "Rédiger une analyse littéraire de 25 lignes sur un texte du chapitre en relevant figures de style et procédés d'écriture.",
+                "Comparer deux textes du programme en relevant similitudes et différences sur le fond et la forme.",
+                "Analyser la construction narrative d'un texte étudié et en proposer une interprétation argumentée.",
+                "Rechercher l'étymologie de 15 mots du texte et montrer comment elle enrichit leur compréhension."
+            ],
+            reparer: [
+                "Rédiger une saynète de théâtre (1,5 pages) sur le thème de la responsabilité, avec didascalies et mise en scène.",
+                "Concevoir une affiche sur les 10 règles d'or de la rédaction, illustrée d'exemples tirés des textes étudiés.",
+                "Écrire un texte argumentatif de 25 lignes sur l'importance du respect dans le cadre scolaire.",
+                "Créer un guide méthode de la lecture analytique en 8 étapes illustrées d'exemples du cours."
+            ],
+            progresser: [
+                "Rédiger un texte de 30 lignes (récit ou description) puis analyser soi-même ses propres erreurs avec méthode.",
+                "Tenir un carnet de vocabulaire enrichi : noter 20 mots avec définition, famille, exemple et synonyme.",
+                "Créer des fiches de révision sur les points faibles identifiés (grammaire, conjugaison, orthographe).",
+                "Recopier et apprendre 8 règles d'orthographe difficiles, puis les appliquer dans un texte personnel."
+            ]
+        },
+        '3e': {
+            comprendre: [
+                "Rédiger un commentaire composé de 30 lignes sur un texte étudié en classe, avec plan détaillé et citations justifiées.",
+                "Analyser un texte argumentatif en identifiant thèse, arguments, contre-arguments et procédés rhétoriques.",
+                "Comparer deux œuvres ou deux extraits du programme en dégageant une problématique précise et argumentée.",
+                "Rédiger une synthèse de 25 lignes articulant les grandes thématiques du programme de français de 3e."
+            ],
+            reparer: [
+                "Rédiger un texte argumentatif complet de 35 lignes sur un sujet en lien avec les œuvres étudiées.",
+                "Créer un guide de préparation au brevet de français (oral + écrit) en 10 conseils illustrés d'exemples.",
+                "Écrire un texte de réécriture à partir d'un extrait étudié, en changeant le point de vue narratif.",
+                "Concevoir une fiche de révision complète du programme de français de 3e, par thématiques organisées."
+            ],
+            progresser: [
+                "Rédiger un texte d'invention complet (35 lignes) dans le cadre d'un sujet type brevet, avec plan.",
+                "S'entraîner à la dictée en s'enregistrant et analyser ses erreurs par catégories grammaticales.",
+                "Créer un planning de révisions du brevet de français sur 4 semaines avec objectifs quotidiens précis.",
+                "Refaire 3 exercices de grammaire de brevet en expliquant chaque règle mobilisée avec précision."
+            ]
+        }
     },
     histgeo: {
-        comprendre: [
-            "Rédiger une biographie détaillée d'un personnage historique étudié en classe (25 lignes minimum).",
-            "Construire une frise chronologique illustrée de la période en cours (12 événements clés).",
-            "Expliquer les causes et conséquences d'un événement historique majeur du chapitre.",
-            "Analyser un document historique (carte, texte, image) vu en classe et en faire une critique.",
-            "Comparer deux civilisations ou deux époques étudiées (points communs et différences).",
-            "Rédiger un discours imaginaire qu'aurait pu prononcer un personnage historique important."
-        ],
-        reparer: [
-            "Dessiner une carte mentale du chapitre de géographie avec les notions clés et les exemples.",
-            "Créer un quiz de 15 questions (avec réponses) sur le chapitre d'histoire ou de géographie.",
-            "Réaliser une affiche présentant un pays ou une région étudiée (avec données clés).",
-            "Préparer un exposé écrit de 5 minutes sur un sujet du chapitre.",
-            "Écrire une lettre imaginaire d'un personnage historique à sa famille racontant un événement.",
-            "Concevoir une carte simplifiée d'une région ou d'un territoire étudié, avec légende."
-        ],
-        progresser: [
-            "Résumer le chapitre en 15 lignes, puis le réduire à 8, puis à 4 (exercice de synthèse progressive).",
-            "Apprendre par cœur 12 dates clés et rédiger une phrase pour chaque expliquant leur importance.",
-            "Relire ses notes du chapitre et les réorganiser sous forme de plan détaillé.",
-            "Créer des flashcards sur les définitions et notions importantes du chapitre (20 minimum).",
-            "Rédiger 5 questions de réflexion sur le chapitre et y répondre en 5 lignes chacune.",
-            "Réaliser une comparaison entre une situation historique du cours et un événement contemporain."
-        ]
+        '6e': {
+            comprendre: [
+                "Construire une frise chronologique illustrée de la période étudiée (10 événements clés avec dates et petits dessins).",
+                "Rédiger la biographie d'un personnage historique du cours (15 lignes minimum) en indiquant pourquoi il est important.",
+                "Dessiner et légender une carte simplifiée d'une région ou civilisation étudiée, avec titre et boussole.",
+                "Expliquer en 15 lignes les causes et les conséquences d'un événement historique du chapitre."
+            ],
+            reparer: [
+                "Créer un quiz de 10 questions (avec réponses) sur la civilisation ou la période étudiée en classe.",
+                "Réaliser une affiche présentant une civilisation étudiée (lieu, époque, mode de vie, religion, art, monuments).",
+                "Préparer un récit imaginaire racontant une journée dans la vie d'un enfant de la civilisation étudiée.",
+                "Écrire une lettre imaginaire d'un personnage historique à sa famille, racontant un événement important."
+            ],
+            progresser: [
+                "Résumer le chapitre en 15 lignes, puis le réduire à 8, puis à 4 (exercice de synthèse progressive).",
+                "Apprendre 10 dates clés et rédiger une phrase pour chaque date expliquant son importance historique.",
+                "Créer des flashcards sur les définitions et notions importantes du chapitre (15 minimum).",
+                "Relire ses notes et les réorganiser sous forme de plan illustré de schémas et de petits dessins."
+            ]
+        },
+        '5e': {
+            comprendre: [
+                "Rédiger une biographie détaillée d'un personnage historique du chapitre (20 lignes minimum, avec contexte).",
+                "Expliquer les causes et les conséquences d'un événement majeur en les classant par catégories (politique, social…).",
+                "Analyser un document historique (carte, texte, image) vu en classe et en faire une critique structurée et argumentée.",
+                "Comparer deux civilisations ou deux périodes étudiées en relevant points communs et différences organisés en tableau."
+            ],
+            reparer: [
+                "Créer un quiz de 15 questions (avec réponses) sur le chapitre d'histoire ou de géographie.",
+                "Réaliser une affiche présentant un espace géographique étudié (avec données clés, carte et légende).",
+                "Écrire une lettre imaginaire d'un personnage historique à sa famille racontant un événement clé du cours.",
+                "Concevoir une carte simplifiée d'une région ou d'un territoire étudié, avec légende complète et soignée."
+            ],
+            progresser: [
+                "Résumer le chapitre en 15 lignes puis le réduire à 8 puis à 4 (exercice de synthèse et de hiérarchisation).",
+                "Créer des flashcards sur les définitions et notions importantes du chapitre (20 minimum).",
+                "Rédiger 5 questions de réflexion sur le chapitre et y répondre en 5 lignes argumentées chacune.",
+                "Réaliser une comparaison entre une situation historique du cours et un événement du monde contemporain."
+            ]
+        },
+        '4e': {
+            comprendre: [
+                "Rédiger une analyse de document historique complète (25 lignes) : contexte, contenu, portée et limites.",
+                "Expliquer en 25 lignes comment un événement du programme a transformé durablement le monde moderne.",
+                "Construire une frise chronologique analytique intégrant clairement causes, faits marquants et conséquences.",
+                "Rédiger un discours imaginaire qu'aurait pu tenir un acteur historique majeur du chapitre, avec arguments."
+            ],
+            reparer: [
+                "Créer un dossier de révision complet (3 pages) sur le chapitre : frise, carte, personnages clés, vocabulaire.",
+                "Concevoir une mini-exposition (5 panneaux rédigés) sur la période ou le territoire géographique étudié.",
+                "Préparer un exposé écrit de 5 minutes sur un sujet du chapitre avec plan, arguments et conclusion solide.",
+                "Réaliser un schéma explicatif reliant les causes, acteurs principaux et conséquences d'un événement clé."
+            ],
+            progresser: [
+                "Apprendre par cœur 15 dates clés et rédiger pour chacune une phrase argumentée sur son importance.",
+                "Créer des fiches de révision thématiques sur les points du programme de 4e déjà vus dans l'année.",
+                "Relire les cours depuis le début de l'année et produire un résumé chronologique structuré en 30 lignes.",
+                "Rédiger 6 questions de réflexion ouvertes sur le chapitre et y répondre avec des arguments développés."
+            ]
+        },
+        '3e': {
+            comprendre: [
+                "Rédiger une composition de 30 lignes sur un sujet du programme : introduction, développement en 2 parties, conclusion.",
+                "Analyser une source primaire du 20e siècle en situant son contexte historique, ses enjeux et sa portée.",
+                "Réaliser une étude de cas géographique complète (territoire, acteurs, enjeux, tensions, perspectives d'avenir).",
+                "Rédiger une synthèse articulant les grandes thématiques du programme de 3e en histoire et en géographie."
+            ],
+            reparer: [
+                "Créer un sujet de révision type brevet (composition + réponse organisée + croquis) sur le programme.",
+                "Concevoir un guide de révision du brevet d'histoire-géo en 10 fiches thématiques avec schémas et définitions.",
+                "Réaliser une carte mentale de l'ensemble du programme de 3e avec les notions, dates et repères clés.",
+                "Préparer une présentation orale de 5 minutes (rédigée) sur un sujet du programme au choix."
+            ],
+            progresser: [
+                "S'entraîner à 2 sujets type brevet chronométrés et analyser ses erreurs et lacunes par catégorie.",
+                "Créer un planning de révision brevet sur 4 semaines couvrant tous les thèmes du programme.",
+                "Mémoriser 20 dates et 20 notions clés du programme et créer un système de révision personnalisé.",
+                "Rédiger une auto-évaluation complète de ses compétences en histoire-géo avec plan de progression."
+            ]
+        }
     },
     sciences: {
-        comprendre: [
-            "Rédiger un compte-rendu d'expérience imaginaire sur le thème du chapitre (protocole, observations, conclusion).",
-            "Expliquer avec ses mots une notion scientifique complexe du chapitre, comme si on l'enseignait.",
-            "Faire une recherche sur un scientifique lié au chapitre et présenter ses découvertes (25 lignes).",
-            "Décrire 4 applications concrètes de la leçon dans la vie de tous les jours ou dans la technologie.",
-            "Schématiser un phénomène scientifique vu en classe et légender précisément.",
-            "Créer un petit lexique illustré des 15 mots-clés du chapitre."
-        ],
-        reparer: [
-            "Créer une fiche de révision illustrée sur le chapitre (schémas, définitions, formules).",
-            "Préparer 5 expériences simples à faire à la maison pour illustrer le chapitre (avec consignes).",
-            "Réaliser une affiche de sensibilisation sur un thème scientifique (environnement, santé, etc.).",
-            "Écrire 12 questions-réponses pour tester les connaissances sur le chapitre.",
-            "Concevoir un petit livret d'initiation à la matière pour les plus jeunes (4 pages minimum).",
-            "Créer un jeu de memory (8 paires) sur les définitions et notions du chapitre."
-        ],
-        progresser: [
-            "Refaire tous les exercices du chapitre en notant ceux qui posent problème et pourquoi.",
-            "Tenir un cahier d'expériences : imaginer et décrire 4 expériences en lien avec le chapitre.",
-            "Créer une carte mentale du chapitre avec les liens entre les différentes notions.",
-            "Rédiger 6 questions de réflexion sur le chapitre (ouvertes, sans réponse immédiate).",
-            "Apprendre par cœur 5 lois ou formules importantes et savoir les expliquer.",
-            "Rédiger un article de blog scientifique (20 lignes) sur un sujet du chapitre, pour un public non-spécialiste."
-        ]
+        '6e': {
+            comprendre: [
+                "Schématiser et légender précisément un phénomène scientifique étudié en classe (cellule, circuit, plante…).",
+                "Expliquer avec ses mots une notion scientifique du cours, comme si on l'enseignait à un camarade de primaire.",
+                "Créer un lexique illustré des 12 mots-clés du chapitre, avec définition claire et petit dessin pour chacun.",
+                "Décrire 3 applications concrètes de la leçon dans la vie quotidienne, avec des exemples très précis."
+            ],
+            reparer: [
+                "Créer une fiche de révision illustrée sur le chapitre (schémas légendés, définitions, points importants colorés).",
+                "Réaliser une affiche de sensibilisation sur un thème du cours (environnement, santé, sécurité électrique…).",
+                "Inventer 5 expériences simples à faire à la maison pour illustrer le chapitre, avec les consignes de sécurité.",
+                "Concevoir un mini-livret d'initiation aux sciences pour un élève de primaire (3 pages illustrées et simples)."
+            ],
+            progresser: [
+                "Refaire tous les exercices du chapitre en notant ceux qui posent problème et en cherchant pourquoi.",
+                "Créer des flashcards sur les définitions et notions importantes du chapitre (15 minimum).",
+                "Tenir un cahier d'observations scientifiques pendant 3 jours (observer, noter et expliquer ce qui nous entoure).",
+                "Apprendre par cœur 5 définitions importantes et savoir les expliquer clairement avec un exemple."
+            ]
+        },
+        '5e': {
+            comprendre: [
+                "Rédiger un compte-rendu d'expérience imaginaire sur le thème du chapitre (problème, protocole, résultats, conclusion).",
+                "Faire une recherche sur un scientifique lié au chapitre et présenter ses découvertes (25 lignes structurées).",
+                "Schématiser et légender un phénomène scientifique vu en classe avec précision, clarté et codes couleurs.",
+                "Créer un lexique illustré des 15 mots-clés du chapitre avec définition précise et exemple d'utilisation."
+            ],
+            reparer: [
+                "Créer une fiche de révision illustrée sur le chapitre (schémas légendés, définitions importantes, formules).",
+                "Écrire 12 questions-réponses pour tester les connaissances des camarades sur le chapitre.",
+                "Réaliser une affiche de sensibilisation sur un thème scientifique en lien avec le cours (écologie, santé…).",
+                "Créer un jeu de memory (8 paires) sur les définitions et notions importantes du chapitre."
+            ],
+            progresser: [
+                "Refaire tous les exercices du chapitre en notant précisément les difficultés rencontrées.",
+                "Créer une carte mentale du chapitre avec les liens entre les différentes notions et concepts.",
+                "Apprendre par cœur 5 lois ou formules importantes et savoir les expliquer et les appliquer dans des exercices.",
+                "Rédiger 6 questions de réflexion ouvertes sur le chapitre et ébaucher des réponses argumentées."
+            ]
+        },
+        '4e': {
+            comprendre: [
+                "Rédiger un compte-rendu de TP imaginaire complet (problématique, protocole, résultats, analyse, conclusion).",
+                "Expliquer en 25 lignes comment une découverte scientifique du chapitre a changé la vie des êtres humains.",
+                "Analyser une application technologique liée au chapitre et en décrire le fonctionnement scientifique précis.",
+                "Rédiger un article de vulgarisation scientifique de 20 lignes sur une notion clé du cours pour un grand public."
+            ],
+            reparer: [
+                "Créer un dossier de révision complet (fiche, schémas, exercices résolus et commentés) sur le chapitre.",
+                "Concevoir une expérience originale permettant d'illustrer une loi ou un phénomène important du cours.",
+                "Réaliser une affiche grand format sur le thème du développement durable en lien avec le chapitre.",
+                "Préparer un quiz de 15 questions scientifiques précises (avec corrections détaillées) pour réviser le chapitre."
+            ],
+            progresser: [
+                "Refaire les exercices et TP du chapitre en détaillant les raisonnements et les méthodes utilisées.",
+                "Créer des fiches de révision thématiques sur les points faibles identifiés dans la matière.",
+                "Rédiger une auto-évaluation complète et honnête, et proposer un plan d'action précis pour progresser.",
+                "Apprendre et savoir restituer 8 lois, formules ou définitions clés du programme de façon fluide."
+            ]
+        },
+        '3e': {
+            comprendre: [
+                "Rédiger une synthèse scientifique de 30 lignes sur un thème du programme (génétique, chimie, physique…).",
+                "Analyser un document scientifique récent en lien avec le chapitre et en évaluer la fiabilité et les enjeux.",
+                "Expliquer le lien entre une découverte scientifique du cours et ses applications technologiques actuelles.",
+                "Rédiger un compte-rendu de démarche expérimentale répondant à une problématique précise du programme."
+            ],
+            reparer: [
+                "Créer un guide de révision brevet sciences en 8 fiches thématiques avec schémas, définitions et formules.",
+                "Concevoir un sujet type brevet (exercice + correction barémée) sur un thème clé du programme.",
+                "Réaliser un exposé écrit sur les enjeux scientifiques et éthiques d'une technologie actuelle (IA, OGM…).",
+                "Préparer un support pédagogique sur un point difficile du programme pour aider les camarades à réviser."
+            ],
+            progresser: [
+                "S'entraîner sur 3 exercices type brevet, chronométrés, et analyser ses erreurs avec précision.",
+                "Créer un planning de révision brevet sciences sur 3 semaines avec objectifs quotidiens et hebdomadaires.",
+                "Rédiger une auto-évaluation complète de ses compétences scientifiques et un plan de progression détaillé.",
+                "Mémoriser 10 définitions, 8 lois et 5 formules clés et savoir les appliquer dans des exercices variés."
+            ]
+        }
     },
     langue: {
-        comprendre: [
-            "Rédiger un texte de 20 lignes dans la langue cible sur un sujet du quotidien (avec dictionnaire).",
-            "Traduire un texte français de 15 lignes dans la langue étudiée, puis comparer avec une correction.",
-            "Expliquer en français 8 règles de grammaire de la langue étudiée, avec exemples.",
-            "Faire une recherche sur un aspect culturel d'un pays de la langue (coutumes, fêtes, monuments).",
-            "Écouter une chanson dans la langue (avec paroles) et écrire un résumé détaillé de ce qu'elle raconte.",
-            "Lire un petit article (niveau débutant) dans la langue et en faire un résumé en français."
-        ],
-        reparer: [
-            "Créer un imagier thématique (15 mots illustrés) sur le vocabulaire du chapitre.",
-            "Préparer un jeu de rôle de 5 minutes (dialogue écrit) sur une situation de la vie courante.",
-            "Concevoir une mini-leçon de vocabulaire pour aider les camarades (avec jeux).",
-            "Créer des flashcards de vocabulaire (mot en langue / traduction / image) sur 25 mots.",
-            "Rédiger 10 questions en langue (avec réponses) pour interviewer un camarade imaginaire.",
-            "Créer un abécédaire bilingue sur le thème du chapitre : 10 mots avec image, traduction et exemple."
-        ],
-        progresser: [
-            "Apprendre par cœur 15 phrases utiles dans la langue et les utiliser dans des phrases personnelles.",
-            "Tenir un petit journal pendant 4 jours : écrire chaque jour 4 phrases dans la langue.",
-            "Se fixer un objectif de vocabulaire (20 mots par semaine) et créer un tableau de suivi.",
-            "Écrire un dialogue de 25 lignes dans la langue avec un thème imposé.",
-            "Créer une présentation (10 phrases) sur soi-même dans la langue, comme pour un échange.",
-            "Rédiger une lettre (12 lignes) à un correspondant imaginaire dans la langue étudiée."
-        ]
+        '6e': {
+            comprendre: [
+                "Créer un imagier thématique de 15 mots illustrés sur le vocabulaire du chapitre, avec traduction et exemple.",
+                "Expliquer en français 5 règles de grammaire de base de la langue étudiée, avec exemples clairs.",
+                "Faire une recherche sur un pays où on parle cette langue et présenter 3 choses intéressantes et originales.",
+                "Écouter une chanson simple dans la langue étudiée et écrire ce qu'on a compris en résumé français."
+            ],
+            reparer: [
+                "Créer des flashcards bilingues (mot / traduction / image) sur 20 mots importants du chapitre.",
+                "Préparer un court dialogue de 10 échanges dans la langue sur une situation du quotidien (marché, école…).",
+                "Concevoir un mini-jeu de vocabulaire (devinettes ou memory écrit) sur le thème du chapitre.",
+                "Rédiger 8 phrases originales et variées en utilisant des mots de vocabulaire du chapitre."
+            ],
+            progresser: [
+                "Apprendre par cœur 10 phrases utiles dans la langue et les utiliser dans des contextes variés.",
+                "Tenir un petit journal de 3 jours : écrire chaque jour 3 phrases simples dans la langue étudiée.",
+                "Créer un tableau de conjugaison illustré pour 5 verbes importants de la langue avec exemples.",
+                "Rédiger une courte présentation de soi-même (10 lignes) dans la langue étudiée."
+            ]
+        },
+        '5e': {
+            comprendre: [
+                "Rédiger un texte de 20 lignes dans la langue cible sur un sujet du quotidien (avec dictionnaire autorisé).",
+                "Expliquer en français 8 règles de grammaire de la langue étudiée, avec exemples et contre-exemples.",
+                "Faire une recherche sur un aspect culturel d'un pays de la langue et le présenter en français structuré.",
+                "Lire un article simple dans la langue et en faire un résumé structuré en français (introduction, développement)."
+            ],
+            reparer: [
+                "Créer un imagier thématique (15 mots illustrés) sur le vocabulaire du chapitre, bilingue et soigné.",
+                "Préparer un jeu de rôle de 5 minutes (dialogue écrit) sur une situation de la vie courante (restaurant, voyage…).",
+                "Créer des flashcards de vocabulaire (mot / traduction / image) sur 25 mots importants du chapitre.",
+                "Rédiger 10 questions dans la langue (avec réponses) pour interviewer un camarade imaginaire."
+            ],
+            progresser: [
+                "Apprendre par cœur 15 phrases utiles dans la langue et les utiliser dans des phrases personnelles variées.",
+                "Tenir un journal de 4 jours : écrire chaque jour 4 phrases dans la langue sur des sujets différents.",
+                "Écrire un dialogue de 25 lignes dans la langue sur un thème imposé (voyage, sport, école…).",
+                "Se fixer un objectif de vocabulaire (20 mots) et créer un tableau de suivi et de mémorisation."
+            ]
+        },
+        '4e': {
+            comprendre: [
+                "Rédiger un texte argumentatif de 25 lignes dans la langue sur un sujet d'actualité simple et concret.",
+                "Analyser un document authentique (article, extrait de roman) dans la langue et en dégager les idées principales.",
+                "Expliquer en français 10 points de grammaire avancée de la langue, avec exemples et explications claires.",
+                "Faire une recherche approfondie sur un aspect culturel ou historique majeur d'un pays de la langue."
+            ],
+            reparer: [
+                "Préparer un exposé écrit complet (20 lignes) dans la langue sur un sujet culturel du cours.",
+                "Créer un guide bilingue des 15 erreurs grammaticales les plus fréquentes à éviter, avec explications.",
+                "Rédiger un dialogue original de 30 échanges intégrant le vocabulaire et les structures grammaticales du chapitre.",
+                "Concevoir une mini-leçon de langue avec exercices originaux pour aider les camarades à réviser."
+            ],
+            progresser: [
+                "Écrire un texte de 30 lignes dans la langue, puis s'auto-corriger en justifiant chaque correction apportée.",
+                "Mémoriser 25 expressions idiomatiques de la langue et les utiliser dans des phrases originales.",
+                "Créer des fiches de révision grammaticales sur les points les plus difficiles du programme de 4e.",
+                "Rédiger une lettre formelle dans la langue (20 lignes) en respectant les conventions et le registre."
+            ]
+        },
+        '3e': {
+            comprendre: [
+                "Rédiger un texte de 30 lignes dans la langue sur un sujet culturel ou de civilisation en lien avec le programme.",
+                "Analyser et résumer un document authentique long dans la langue (article de presse, interview, extrait).",
+                "Réaliser une étude comparée de la langue et du français sur un point grammatical complexe du programme.",
+                "Rédiger une présentation structurée sur un aspect de la civilisation des pays dont on étudie la langue."
+            ],
+            reparer: [
+                "Préparer un dossier de révision de l'oral du brevet : thèmes culturels, vocabulaire clé, expressions types.",
+                "Créer un guide de préparation à l'épreuve de langue du brevet avec méthode, exemples et conseils.",
+                "Concevoir un support pédagogique sur un point difficile du programme pour aider les camarades.",
+                "Rédiger un texte de réécriture ou de transposition à partir d'un document important étudié en classe."
+            ],
+            progresser: [
+                "S'entraîner à 2 exercices type brevet de langue (compréhension + expression) et s'auto-évaluer honnêtement.",
+                "Créer un planning de révision de la langue sur 4 semaines avant le brevet, avec objectifs journaliers.",
+                "Mémoriser 30 mots et expressions de haut niveau et les utiliser dans des contextes variés et précis.",
+                "Rédiger une auto-évaluation complète de ses compétences en langue et proposer un plan de progrès concret."
+            ]
+        }
     },
     eps: {
-        comprendre: [
-            "Rédiger une analyse des règles officielles d'un sport pratiqué en cours (20 lignes avec schémas).",
-            "Expliquer les bénéfices physiologiques de l'activité physique régulière en lien avec la séquence.",
-            "Créer un lexique illustré de 15 termes techniques du sport ou de l'activité pratiquée.",
-            "Rechercher et présenter la biographie d'un athlète de haut niveau lié à l'activité du cours.",
-            "Analyser les notions d'équilibre, coordination ou endurance vues en cours et leurs applications.",
-            "Décrire une stratégie collective pour améliorer les performances d'une équipe dans l'activité pratiquée."
-        ],
-        reparer: [
-            "Concevoir un échauffement de 10 minutes adapté à l'activité du cours, avec explication de chaque exercice.",
-            "Créer un règlement illustré de l'activité pratiquée à destination d'un élève absent.",
-            "Préparer un plan d'entraînement d'une semaine pour améliorer la condition physique générale.",
-            "Rédiger les règles du fair-play et du respect dans le sport, avec des exemples concrets.",
-            "Concevoir un quiz de 10 questions sur les règles et les techniques de l'activité du cours.",
-            "Créer une affiche de sensibilisation sur les bénéfices du sport et du mouvement pour la santé."
-        ],
-        progresser: [
-            "Se fixer 3 objectifs personnels en EPS pour le prochain trimestre et écrire comment les atteindre.",
-            "Tenir un journal de bord sportif pendant 5 jours : noter l'activité physique quotidienne et ses ressentis.",
-            "Rédiger une auto-évaluation de ses compétences dans l'activité en cours (points forts / à améliorer).",
-            "Créer un programme de 3 exercices à pratiquer chez soi pour progresser dans l'activité.",
-            "Analyser une de ses performances lors d'un cours et proposer 4 pistes concrètes d'amélioration.",
-            "Rechercher 5 techniques de récupération sportive et les expliquer en les illustrant."
-        ]
+        '6e': {
+            comprendre: ["Rédiger une analyse des règles d'un sport pratiqué en cours (15 lignes avec schéma de terrain légendé).","Expliquer les bénéfices du sport sur la santé (énergie, concentration, humeur) en 15 lignes illustrées.","Créer un lexique illustré de 12 termes techniques du sport ou de l'activité pratiquée en classe.","Décrire en détail une stratégie simple pour améliorer les performances d'une équipe dans l'activité du cours."],
+            reparer: ["Concevoir un échauffement de 8 minutes adapté à l'activité du cours, avec explication de chaque exercice.","Créer un règlement illustré de l'activité pratiquée à destination d'un élève qui n'a pas assisté au cours.","Rédiger les règles du fair-play et du respect dans le sport, avec des exemples concrets vécus en classe.","Concevoir un quiz de 10 questions sur les règles et les techniques de l'activité pratiquée, avec réponses."],
+            progresser: ["Tenir un journal sportif pendant 3 jours : noter son activité physique quotidienne et ses ressentis.","Rédiger une auto-évaluation de ses compétences dans l'activité en cours (points forts / axes de progrès).","Créer un programme de 3 exercices simples à pratiquer chez soi pour progresser dans l'activité du cours.","Se fixer 2 objectifs personnels en EPS pour le trimestre et expliquer concrètement comment les atteindre."]
+        },
+        '5e': {
+            comprendre: ["Rédiger une analyse des règles officielles d'un sport pratiqué en cours (20 lignes avec schémas clairs).","Expliquer les bénéfices physiologiques de l'activité physique régulière en lien avec la séquence travaillée.","Rechercher et présenter la biographie d'un athlète de haut niveau lié à l'activité pratiquée en cours.","Analyser les notions d'équilibre, coordination ou endurance vues en cours et leurs applications concrètes."],
+            reparer: ["Concevoir un échauffement de 10 minutes adapté à l'activité du cours, avec explication et justification.","Créer un règlement illustré et complet de l'activité pratiquée, avec schémas de terrain légendés.","Rédiger les règles du fair-play et du respect dans le sport avec des exemples tirés directement des cours.","Préparer un plan d'entraînement d'une semaine pour améliorer sa condition physique générale."],
+            progresser: ["Se fixer 3 objectifs personnels en EPS pour le trimestre et décrire les étapes concrètes pour les atteindre.","Tenir un journal de bord sportif pendant 5 jours : noter l'activité physique quotidienne et les ressentis.","Rédiger une auto-évaluation de ses compétences dans l'activité (points forts / axes d'amélioration).","Rechercher 5 techniques de récupération sportive efficaces et les expliquer en les illustrant."]
+        },
+        '4e': {
+            comprendre: ["Analyser tactiquement une situation de jeu collective et proposer 3 stratégies alternatives argumentées.","Expliquer les mécanismes physiologiques de l'effort (fréquence cardiaque, oxygène, récupération musculaire).","Rechercher et analyser la carrière d'un sportif de haut niveau lié à l'activité pratiquée en cours.","Rédiger une réflexion sur les valeurs sportives (dépassement de soi, esprit d'équipe, fair-play, solidarité)."],
+            reparer: ["Concevoir un programme d'entraînement de 2 semaines avec objectifs, exercices et indicateurs de progrès.","Créer une charte du sportif responsable illustrée d'exemples vécus en cours d'EPS.","Réaliser une affiche sur les enjeux du sport pour la santé, le bien-être et l'épanouissement.","Préparer un guide pédagogique sur les règles d'un sport pour des élèves plus jeunes (6e)."],
+            progresser: ["Rédiger une auto-évaluation détaillée de ses compétences en EPS et proposer 4 axes de progrès concrets.","Tenir un journal sportif pendant une semaine avec objectifs quotidiens et bilan en fin de semaine.","Créer un plan de développement personnel en EPS sur le semestre avec indicateurs de réussite mesurables.","Analyser une de ses performances en cours et proposer 5 pistes d'amélioration concrètes et réalistes."]
+        },
+        '3e': {
+            comprendre: ["Rédiger une analyse complète d'une séquence d'apprentissage en EPS (objectifs, compétences, progrès réalisés).","Analyser les liens entre pratique sportive régulière, bien-être mental et réussite scolaire (25 lignes argumentées).","Préparer un dossier sur l'évolution historique d'un sport ou d'une activité sportive au cours du temps.","Rédiger une réflexion sur les enjeux éthiques du sport de haut niveau contemporain (dopage, pression, équité)."],
+            reparer: ["Créer un guide complet d'une activité physique pour un élève débutant (règles, techniques, conseils pratiques).","Concevoir un programme sportif annuel adapté à un lycéen souhaitant rester en bonne santé physique et mentale.","Réaliser une présentation sur l'impact social et culturel d'un sport majeur dans le monde.","Préparer un exposé complet sur les Jeux Olympiques : histoire, valeurs, enjeux contemporains, perspectives."],
+            progresser: ["Rédiger un bilan complet de ses compétences en EPS sur toute l'année de 3e avec projet de progression.","Créer un portfolio EPS (sur feuille) présentant les apprentissages majeurs depuis l'entrée au collège.","Se fixer des objectifs sportifs précis pour le lycée et décrire le chemin concret pour les atteindre.","Analyser ses points forts et ses lacunes en EPS et proposer un plan d'action personnalisé et réaliste."]
+        }
     },
     arts: {
-        comprendre: [
-            "Analyser une œuvre d'art (ou une composition musicale) étudiée en cours : technique, époque, message.",
-            "Rédiger la biographie d'un artiste ou compositeur vu en cours (25 lignes), en lien avec son œuvre.",
-            "Comparer deux œuvres ou deux styles artistiques étudiés en relevant similitudes et différences.",
-            "Créer un lexique illustré de 15 termes techniques de la discipline artistique (peinture, musique…).",
-            "Expliquer comment les arts plastiques ou la musique reflètent leur époque historique.",
-            "Décrire en 20 lignes la technique utilisée dans une création du cours, étape par étape."
-        ],
-        reparer: [
-            "Concevoir une affiche présentant un mouvement artistique ou musical étudié, avec exemples.",
-            "Préparer un quiz de 12 questions (avec réponses) sur les œuvres et artistes du cours.",
-            "Rédiger une critique d'art de 20 lignes sur une œuvre de son choix liée au cours.",
-            "Créer un programme de concert imaginaire (ou d'exposition) autour du thème de la séquence.",
-            "Écrire un texte de présentation d'une œuvre, comme s'il était affiché dans un musée.",
-            "Réaliser un carnet d'inspiration (sur feuille) : 5 références artistiques liées au thème du cours."
-        ],
-        progresser: [
-            "Se fixer 3 objectifs pour progresser dans la discipline artistique et décrire les étapes pour y parvenir.",
-            "Tenir un journal créatif pendant 4 jours : noter une observation artistique quotidienne.",
-            "Rédiger une auto-évaluation de sa pratique : points forts, difficultés, ce qu'on voudrait explorer.",
-            "Rechercher et présenter 5 techniques artistiques différentes avec un exemple pour chacune.",
-            "Créer des fiches de révision visuelles sur les notions clés de la séquence.",
-            "Écrire une lettre à un artiste étudié pour lui poser 5 questions sur sa démarche créative."
-        ]
+        '6e': {
+            comprendre: ["Analyser une œuvre d'art étudiée en cours : décrire ce qu'on voit, ce qu'on ressent, ce qu'elle raconte.","Créer un lexique illustré de 12 termes techniques de la discipline (couleurs, formes, techniques, matériaux…).","Rechercher un artiste ou compositeur et présenter 3 de ses œuvres les plus importantes avec explications.","Expliquer en 15 lignes comment l'art exprime des émotions humaines, avec des exemples tirés du cours."],
+            reparer: ["Concevoir une affiche présentant un mouvement artistique ou musical étudié avec illustrations et informations.","Créer un programme d'exposition imaginaire autour du thème de la séquence artistique travaillée.","Rédiger la biographie d'un artiste ou compositeur étudié (15 lignes), avec anecdotes intéressantes.","Préparer un quiz de 10 questions (avec réponses) sur les œuvres et artistes vus en cours."],
+            progresser: ["Tenir un journal créatif pendant 4 jours : noter et dessiner une observation artistique par jour.","Créer des fiches de révision visuelles et colorées sur les notions clés de la séquence artistique.","Se fixer 2 objectifs pour progresser dans la discipline et décrire les étapes concrètes pour y parvenir.","Rédiger une auto-évaluation de sa pratique artistique ou musicale (points forts / axes à améliorer)."]
+        },
+        '5e': {
+            comprendre: ["Analyser une œuvre d'art ou une composition musicale étudiée : technique utilisée, époque, message transmis.","Rédiger la biographie d'un artiste ou compositeur vu en cours (20 lignes), en lien avec son œuvre principale.","Comparer deux œuvres ou deux styles artistiques en relevant similitudes et différences sur le fond et la forme.","Expliquer comment les arts plastiques ou la musique reflètent et témoignent de leur époque historique."],
+            reparer: ["Concevoir une affiche présentant un mouvement artistique ou musical étudié, avec exemples et chronologie.","Rédiger une critique d'art de 20 lignes sur une œuvre de son choix liée au programme du cours.","Créer un programme de concert imaginaire (ou d'exposition) autour du thème de la séquence artistique.","Écrire un texte de présentation d'une œuvre, comme s'il était affiché sur le mur d'un musée."],
+            progresser: ["Se fixer 3 objectifs pour progresser dans la discipline artistique et décrire les étapes concrètes.","Tenir un journal créatif pendant 4 jours : noter et illustrer une observation artistique quotidienne.","Créer des fiches de révision visuelles sur les notions et les œuvres clés de la séquence.","Rédiger une auto-évaluation de sa pratique : points forts, difficultés rencontrées, envies d'exploration."]
+        },
+        '4e': {
+            comprendre: ["Analyser en 25 lignes une œuvre majeure de l'art occidental ou de la musique classique/contemporaine.","Rédiger un essai de 20 lignes sur les liens entre une œuvre artistique importante et son contexte historique.","Comparer deux mouvements artistiques du programme en dégageant une problématique précise et argumentée.","Analyser les procédés techniques et stylistiques caractéristiques d'une création étudiée en cours."],
+            reparer: ["Créer un dossier de présentation d'un mouvement artistique (histoire, caractéristiques, œuvres phares, artistes).","Rédiger une critique artistique argumentée de 25 lignes sur une œuvre importante étudiée en cours.","Concevoir une exposition virtuelle (sur feuilles) autour d'un thème artistique du programme.","Préparer un guide d'introduction à un courant artistique ou musical pour des élèves plus jeunes."],
+            progresser: ["Rédiger une auto-évaluation détaillée de sa pratique artistique et proposer 4 axes de progrès concrets.","Créer un portfolio (sur feuilles) de ses créations et analyses artistiques de l'année avec commentaires.","Tenir un journal de recherche artistique pendant une semaine : sources, inspirations et questionnements.","Mémoriser 10 œuvres clés du programme et savoir les analyser et les présenter en 5 lignes chacune."]
+        },
+        '3e': {
+            comprendre: ["Rédiger un commentaire d'œuvre d'art complet (30 lignes) avec problématique, analyse et interprétation.","Analyser les rapports entre art, société et histoire dans une œuvre ou un courant artistique du programme.","Comparer deux œuvres d'époques différentes traitant d'un même thème universel (guerre, portrait, nature…).","Rédiger une synthèse des grandes tendances artistiques majeures du 20e siècle vues dans le programme."],
+            reparer: ["Créer un guide de préparation à l'oral d'histoire des arts avec méthode détaillée et exemples commentés.","Concevoir un dossier thématique complet sur un mouvement ou un artiste important du programme.","Préparer un exposé oral (entièrement rédigé) de 5 minutes sur une œuvre choisie dans le programme.","Réaliser un catalogue d'exposition imaginaire soigné autour d'un thème fort du programme."],
+            progresser: ["Préparer l'oral d'histoire des arts en rédigeant 3 présentations complètes d'œuvres différentes du programme.","Créer un planning de révision de l'histoire des arts sur 4 semaines avant le brevet, avec objectifs.","Mémoriser 15 œuvres clés du programme et savoir les analyser à l'oral et à l'écrit avec précision.","Rédiger une auto-évaluation de ses compétences artistiques et un projet de progression personnel."]
+        }
     },
     autre: {
-        comprendre: [
-            "Rédiger une synthèse de 25 lignes sur le chapitre en cours, en mettant en évidence les idées principales.",
-            "Créer une carte mentale complète du dernier cours vu en classe.",
-            "Expliquer en 20 lignes pourquoi cette matière est importante pour sa culture générale.",
-            "Faire une recherche sur un métier lié à cette discipline et présenter ses découvertes.",
-            "Comparer cette matière avec une autre discipline : points communs et différences.",
-            "Préparer 10 questions de révision sur le chapitre, avec réponses détaillées."
-        ],
-        reparer: [
-            "Préparer un quiz de 15 questions sur le chapitre pour tester ses camarades.",
-            "Créer une affiche motivationnelle sur l'importance de l'effort et du travail dans toutes les matières.",
-            "Écrire une lettre de conseils à un élève plus jeune sur comment réussir dans cette matière.",
-            "Concevoir une fiche méthode générique pour mieux apprendre ses leçons.",
-            "Réaliser un petit journal de bord de la semaine avec ce qui a été appris chaque jour.",
-            "Créer un aide-mémoire sur les notions importantes du chapitre (1 page recto-verso)."
-        ],
-        progresser: [
-            "Établir un planning de révision pour la semaine incluant toutes les matières.",
-            "Rédiger 12 questions à se poser avant un contrôle pour vérifier ses connaissances.",
-            "Créer des fiches de révision sur les points faibles identifiés dans la matière.",
-            "Se fixer 4 objectifs d'organisation pour le mois à venir (matériel, temps, méthode).",
-            "Tenir un cahier de progrès : noter chaque jour une petite victoire ou une chose comprise.",
-            "Apprendre par cœur 5 définitions ou notions clés du chapitre et savoir les reformuler."
-        ]
+        '6e': {
+            comprendre: ["Créer une carte mentale complète du dernier cours vu en classe avec toutes les notions importantes.","Expliquer en 15 lignes pourquoi cette matière est utile et importante pour la vie quotidienne.","Préparer 8 questions de révision sur le chapitre, avec réponses détaillées et rédigées.","Faire une recherche sur un métier lié à cette discipline et présenter ses découvertes de façon claire."],
+            reparer: ["Créer une affiche motivationnelle sur l'importance du travail, de l'effort et de la persévérance à l'école.","Écrire une lettre de conseils à un élève de CM2 sur comment bien se comporter et s'organiser au collège.","Concevoir une fiche méthode simple et illustrée pour mieux écouter et prendre des notes en cours.","Réaliser un petit journal de la semaine : noter chaque jour une chose importante apprise."],
+            progresser: ["Établir un planning de révision pour la semaine en incluant toutes les matières et les activités.","Créer des fiches de révision claires sur les notions importantes vues depuis le début du trimestre.","Se fixer 3 objectifs d'organisation personnelle pour le mois à venir et expliquer comment les tenir.","Tenir un cahier de progrès : noter chaque jour une réussite et une chose à améliorer."]
+        },
+        '5e': {
+            comprendre: ["Rédiger une synthèse de 20 lignes sur le chapitre en cours, en mettant en évidence les idées essentielles.","Créer une carte mentale complète et organisée du dernier cours avec les notions et liens importants.","Préparer 10 questions de révision variées sur le chapitre, avec réponses détaillées et rédigées.","Comparer cette matière avec une autre discipline : points communs, différences et complémentarités."],
+            reparer: ["Préparer un quiz de 12 questions sur le chapitre pour tester et aider ses camarades à réviser.","Créer une affiche motivationnelle sur l'importance de l'effort et du travail dans toutes les matières.","Écrire une lettre de conseils à un élève plus jeune sur comment réussir et progresser dans cette matière.","Concevoir une fiche méthode complète pour mieux apprendre et retenir ses leçons."],
+            progresser: ["Établir un planning de révision hebdomadaire incluant toutes les matières et les moments de détente.","Créer des fiches de révision claires sur les points faibles identifiés dans la matière.","Se fixer 4 objectifs d'organisation personnelle pour le mois à venir (matériel, temps, méthodes, attitude).","Tenir un cahier de progrès : noter chaque jour une petite victoire scolaire et une chose à améliorer."]
+        },
+        '4e': {
+            comprendre: ["Rédiger une synthèse de 25 lignes sur le chapitre en organisant les idées par ordre d'importance.","Analyser les liens entre cette matière et d'autres disciplines ou domaines concrets de la vie.","Créer une carte mentale avancée du chapitre reliant notions clés, exemples et applications pratiques.","Préparer 12 questions de réflexion sur le chapitre et y répondre de manière argumentée et développée."],
+            reparer: ["Préparer un dossier de révision complet sur le chapitre (fiche, exercices, auto-quiz avec réponses).","Écrire un guide méthode pour réussir dans cette matière, destiné à des élèves de 6e.","Concevoir une présentation structurée du chapitre à destination d'un camarade absent.","Créer une affiche synthétique claire et soignée sur les notions clés du chapitre."],
+            progresser: ["Créer un planning de travail personnel sur 3 semaines avec objectifs quotidiens précis et réalistes.","Rédiger une auto-évaluation honnête de ses compétences et un plan d'action concret pour progresser.","Concevoir un système de révision personnalisé (techniques, rythme, outils) et le tester une semaine.","Tenir un journal de progrès pendant 5 jours avec objectifs quotidiens et bilans honnêtes."]
+        },
+        '3e': {
+            comprendre: ["Rédiger une synthèse complète de 30 lignes sur le chapitre, articulant toutes les notions clés.","Analyser comment les compétences développées dans cette matière seront utiles au lycée et dans la vie.","Créer une carte mentale de l'ensemble du programme vu en 3e dans cette matière, bien organisée.","Préparer 15 questions de révision type brevet et y répondre de manière développée et argumentée."],
+            reparer: ["Créer un guide de révision complet du programme de 3e dans cette matière, en 8 fiches thématiques.","Préparer un exposé structuré de 5 minutes sur un sujet clé du programme, avec plan et support écrit.","Concevoir un dossier thématique sur un sujet transversal lié à la matière et au monde actuel.","Rédiger un bilan des apprentissages de l'année et identifier les points à consolider avant le brevet."],
+            progresser: ["Créer un planning de révision brevet complet sur 4 semaines avec objectifs quotidiens précis.","Rédiger une auto-évaluation globale de ses compétences sur l'ensemble du programme de 3e.","S'entraîner sur des exercices type brevet de la matière et analyser ses erreurs de façon méthodique.","Concevoir un système personnel de mémorisation et le tester sur les notions clés du programme."]
+        }
     }
 };
 
 const objectifsParFaute = {
-    bavardage: {
-        obj1: "Comprendre l'impact du bruit sur l'apprentissage et la concentration de tous",
-        obj2: "Créer un outil qui favorise le calme et l'attention en classe",
-        obj3: "Développer des stratégies personnelles pour mieux écouter et participer"
-    },
-    oublie: {
-        obj1: "Prendre conscience du lien entre organisation matérielle et réussite scolaire",
-        obj2: "Concevoir un système anti-oubli personnalisé et efficace",
-        obj3: "Automatiser les routines d'organisation par la pratique"
-    },
-    travail: {
-        obj1: "Analyser les freins au travail personnel et identifier des solutions",
-        obj2: "Produire un contenu de qualité pour rattraper le travail manqué",
-        obj3: "Planifier son travail sur la durée et respecter ses engagements"
-    },
-    pasrespect: {
-        obj1: "Développer l'empathie et comprendre l'importance du respect du cadre collectif",
-        obj2: "Réparer par une contribution positive et valorisante pour la classe",
-        obj3: "S'engager concrètement à adopter des comportements respectueux"
-    },
-    decrochage: {
-        obj1: "Identifier les causes de la démotivation et apprendre à les exprimer",
-        obj2: "Retrouver du sens par une action concrète, gratifiante et utile",
-        obj3: "Se fixer un premier objectif accessible pour renouer avec la réussite"
-    },
-    telephone: {
-        obj1: "Comprendre les impacts cognitifs du téléphone sur l'apprentissage et la mémorisation",
-        obj2: "Concevoir une charte personnelle d'utilisation responsable du numérique",
-        obj3: "Développer des stratégies concrètes pour gérer son attention en classe"
-    },
-    triche: {
-        obj1: "Analyser les causes de la tentation de tricher et leurs conséquences à long terme",
-        obj2: "Renforcer ses connaissances de manière honnête et autonome",
-        obj3: "S'engager dans une démarche d'apprentissage confiant et personnel"
-    },
-    autre: {
-        obj1: "Transformer une difficulté en opportunité d'apprentissage et de réflexion",
-        obj2: "Contribuer positivement à la vie de la classe ou du groupe",
-        obj3: "Progresser dans ses méthodes de travail et son autonomie"
-    }
+    bavardage:   { obj1:"Comprendre l'impact du bavardage sur la concentration et l'apprentissage de toute la classe", obj2:"Créer un outil qui favorise le calme, l'écoute et le respect mutuel en classe", obj3:"Développer des stratégies personnelles pour mieux écouter et participer à bon escient" },
+    oublie:      { obj1:"Prendre conscience du lien direct entre organisation matérielle et réussite scolaire", obj2:"Concevoir un système anti-oubli personnalisé, efficace et durable au quotidien", obj3:"Automatiser les routines d'organisation pour gagner en autonomie et en fiabilité" },
+    travail:     { obj1:"Analyser les freins personnels au travail et identifier des solutions concrètes et réalistes", obj2:"Produire un contenu de qualité pour rattraper et approfondir les apprentissages manqués", obj3:"Planifier son travail dans le temps et s'engager à respecter ses échéances" },
+    pasrespect:  { obj1:"Développer l'empathie et comprendre l'importance du cadre collectif pour la vie de groupe", obj2:"Réparer par une contribution positive, valorisante et utile pour la communauté classe", obj3:"S'engager concrètement et durablement à adopter des comportements respectueux envers tous" },
+    decrochage:  { obj1:"Identifier les causes personnelles de la démotivation et apprendre à les exprimer positivement", obj2:"Retrouver du sens par une action concrète, gratifiante et utile à soi et aux autres", obj3:"Se fixer un premier objectif accessible et motivant pour renouer avec la réussite scolaire" },
+    telephone:   { obj1:"Comprendre les impacts cognitifs prouvés du téléphone sur l'attention et la mémorisation", obj2:"Concevoir une charte personnelle d'utilisation responsable et raisonnée du numérique", obj3:"Développer des stratégies concrètes pour gérer son attention et ses distractions en classe" },
+    triche:      { obj1:"Analyser les causes et conséquences de la tentation de tricher à court et à long terme", obj2:"Renforcer ses connaissances de manière honnête, autonome et durable", obj3:"S'engager dans une démarche d'apprentissage confiant, personnel et valorisant" },
+    autre:       { obj1:"Transformer une difficulté en opportunité d'apprentissage et de réflexion personnelle profonde", obj2:"Contribuer positivement et activement à la vie de la classe et du groupe", obj3:"Progresser dans ses méthodes de travail et développer son autonomie et sa rigueur" }
 };
 
 const durees = ["30–35 min","35–40 min","40–45 min","30–40 min","35–45 min"];
+const nomsMatiere = { maths:'Mathématiques', francais:'Français', histgeo:'Histoire-Géographie', sciences:'Sciences', langue:'Langue vivante', eps:'EPS', arts:'Arts / Musique', autre:'Interdisciplinaire' };
+const nomsFaute   = { bavardage:'Bavardage perturbateur', oublie:'Oubli de matériel', travail:'Travail non fait', pasrespect:'Manque de respect', decrochage:'Passivité / décrochage', telephone:'Usage du téléphone', triche:'Tentative de triche', autre:'Autre situation' };
 
-const nomsMatiere = {
-    maths: 'Mathématiques', francais: 'Français', histgeo: 'Histoire-Géo',
-    sciences: 'Sciences', langue: 'Langue vivante', eps: 'EPS',
-    arts: 'Arts / Musique', autre: 'Interdisciplinaire'
-};
-const nomsNiveau = { primaire: 'Primaire', college: 'Collège', lycee: 'Lycée' };
-const nomsFaute = {
-    bavardage: 'Bavardage', oublie: 'Oubli de matériel', travail: 'Travail non fait',
-    pasrespect: 'Manque de respect', decrochage: 'Passivité / décrochage',
-    telephone: 'Usage du téléphone', triche: 'Tentative de triche', autre: 'Autre situation'
+const introParFaute = {
+    bavardage:  (p,c) => `${p}, élève de ${c}, a perturbé le déroulement du cours par des bavardages répétés, nuisant à la concentration de l'ensemble de la classe. Les travaux suivants visent à comprendre l'impact de ce comportement et à développer des habitudes d'écoute et de participation constructive.`,
+    oublie:     (p,c) => `${p}, élève de ${c}, n'a pas apporté le matériel nécessaire au cours. Ces travaux ont pour objectif de prendre conscience du lien entre organisation personnelle et réussite scolaire, et de mettre en place des méthodes concrètes et durables.`,
+    travail:    (p,c) => `${p}, élève de ${c}, n'a pas effectué le travail demandé. Ces travaux visent à rattraper et approfondir les apprentissages manqués, et à développer une organisation permettant de respecter ses engagements scolaires.`,
+    pasrespect: (p,c) => `${p}, élève de ${c}, a manqué de respect envers un membre de la communauté scolaire. Ces travaux ont pour but de comprendre les fondements du vivre-ensemble, de réparer par une contribution positive et de s'engager à adopter des comportements respectueux.`,
+    decrochage: (p,c) => `${p}, élève de ${c}, a adopté une attitude passive ou décrochée en classe. Ces travaux visent à retrouver du sens dans les apprentissages, à identifier les causes de la démotivation et à renouer avec la réussite par des actions concrètes et valorisantes.`,
+    telephone:  (p,c) => `${p}, élève de ${c}, a utilisé son téléphone pendant le cours, perturbant sa propre attention et celle de ses voisins. Ces travaux visent à comprendre les effets cognitifs des distractions numériques et à développer des habitudes d'attention et de concentration.`,
+    triche:     (p,c) => `${p}, élève de ${c}, a tenté de tricher lors d'une évaluation. Ces travaux ont pour objectif de comprendre les enjeux du travail personnel honnête, de renforcer ses connaissances de façon autonome et de s'engager dans une démarche d'apprentissage valorisante et éthique.`,
+    autre:      (p,c) => `${p}, élève de ${c}, a fait l'objet d'un manquement au règlement scolaire. Ces travaux s'inscrivent dans une démarche éducative constructive visant à transformer cette difficulté en opportunité d'apprentissage et de progrès personnel.`
 };
 
-/* ===================== DOM ===================== */
+/* ===== STATE ===== */
+let aiMode = false;
+let cards = [{},{},{}];
+
+/* ===== DOM ===== */
 const matiereSelect = document.getElementById('matiereSelect');
 const fauteSelect   = document.getElementById('fauteSelect');
-const niveauSelect  = { value: 'college' }; // collège uniquement
-const btnGenerer    = document.getElementById('btnGenerer');
-const btnRemettre   = document.getElementById('btnRemettre');
+const classeSelect  = document.getElementById('classeSelect');
+const prenomEleve   = document.getElementById('prenomEleve');
+const nomEleve      = document.getElementById('nomEleve');
+const dateField     = document.getElementById('dateField');
+const dateRendu     = document.getElementById('dateRendu');
+const profField     = document.getElementById('profField');
+const btnGen        = document.getElementById('btnGen');
+const btnPrint      = document.getElementById('btnPrint');
+const btnRst        = document.getElementById('btnRst');
 const aiToggle      = document.getElementById('aiToggle');
-const togglePill    = document.getElementById('togglePill');
-const contextZone   = document.getElementById('contextZone');
-const contextInput  = document.getElementById('contextInput');
-const statusText    = document.getElementById('statusText');
-const statusDot     = document.getElementById('statusDot');
-const cardsGrid     = document.getElementById('cardsGrid');
+const pillEl        = document.getElementById('pill');
+const ctxZone       = document.getElementById('ctxZone');
+const ctxInput      = document.getElementById('ctxInput');
+const statusTxt     = document.getElementById('statusTxt');
+const dotEl         = document.getElementById('dot');
 
-let aiMode = false;
-let currentData = [{},{},{}]; // cache for regen single cards
+const apikeyZone    = document.getElementById('apikeyZone');
+const apiKeyInput   = document.getElementById('apiKeyInput');
+const akSave        = document.getElementById('akSave');
+const akStatus      = document.getElementById('akStatus');
+const akWarn        = document.getElementById('akWarn');
 
-/* ===================== AI TOGGLE ===================== */
-aiToggle.addEventListener('click', () => {
-    aiMode = !aiMode;
-    togglePill.classList.toggle('on', aiMode);
-    contextZone.classList.toggle('visible', aiMode);
-    document.querySelectorAll('.carte').forEach(c => c.classList.toggle('ai-mode', aiMode));
-    if (aiMode) {
-        setStatus('✨ Mode IA activé — Claude va générer des travaux personnalisés', false);
+// Restore saved key from sessionStorage
+let savedApiKey = sessionStorage.getItem('anthropic_key') || '';
+if(savedApiKey){ apiKeyInput.value=savedApiKey; }
+
+function checkKeyStatus(){
+    const k = apiKeyInput.value.trim() || savedApiKey;
+    if(k && k.startsWith('sk-ant')){
+        akStatus.textContent='✅ Clé valide enregistrée — l\'IA est prête.';
+        akStatus.className='ak-status ok';
+        akWarn.classList.remove('show');
+    } else if(k) {
+        akStatus.textContent='⚠️ Format inattendu (doit commencer par sk-ant…)';
+        akStatus.className='ak-status err';
+        akWarn.classList.remove('show');
+    } else {
+        akStatus.textContent='';
+        akWarn.classList.add('show');
+    }
+}
+
+akSave.addEventListener('click',()=>{
+    const k = apiKeyInput.value.trim();
+    if(k){ sessionStorage.setItem('anthropic_key',k); savedApiKey=k; }
+    checkKeyStatus();
+    if(k && k.startsWith('sk-ant')) setStatus('✨ Mode IA prêt — clé API enregistrée',false);
+});
+
+// Allow Enter key to validate
+apiKeyInput.addEventListener('keydown',e=>{ if(e.key==='Enter') akSave.click(); });
+dateField.value = new Date().toISOString().split('T')[0];
+const r7 = new Date(); r7.setDate(r7.getDate()+7);
+dateRendu.value = r7.toISOString().split('T')[0];
+
+/* ===== STATUS ===== */
+function updateStatus(){
+    const m=matiereSelect.value, f=fauteSelect.value, c=classeSelect.value;
+    setStatus(`📌 ${c} · ${nomsMatiere[m]} · ${nomsFaute[f]}`, false);
+}
+function setStatus(t,loading){ statusTxt.textContent=t; dotEl.classList.toggle('pulse',loading); }
+[matiereSelect,fauteSelect,classeSelect].forEach(s=>s.addEventListener('change',updateStatus));
+
+/* ===== AI TOGGLE ===== */
+aiToggle.addEventListener('click',()=>{
+    aiMode=!aiMode; pillEl.classList.toggle('on',aiMode);
+    apikeyZone.classList.toggle('show',aiMode);
+    ctxZone.classList.toggle('show',aiMode);
+    document.querySelectorAll('.carte').forEach(c=>c.classList.toggle('ai-on',aiMode));
+    if(aiMode){
+        setStatus('✨ Mode IA activé — entrez votre clé API ci-dessous',false);
+        checkKeyStatus();
     } else {
         updateStatus();
+        akStatus.textContent=''; akWarn.classList.remove('show');
     }
 });
 
-/* ===================== STATUS ===================== */
-function updateStatus() {
-    const m = matiereSelect.value, f = fauteSelect.value, n = niveauSelect.value;
-    setStatus(`📌 ${nomsMatiere[m]} · Collège · ${nomsFaute[f]}`, false);
-}
+/* ===== HELPERS ===== */
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
-function setStatus(text, loading) {
-    statusText.textContent = text;
-    statusDot.classList.toggle('loading', loading);
-}
-
-[matiereSelect, fauteSelect].forEach(s => s.addEventListener('change', updateStatus));
-
-/* ===================== RANDOM PICK ===================== */
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-function getLocalData(matiere, faute) {
-    const b = banque[matiere] || banque.autre;
-    const o = objectifsParFaute[faute] || objectifsParFaute.autre;
+function getLocalData(matiere,faute,classe){
+    const b=(banque[matiere]?.[classe])||(banque.autre[classe])||banque.autre['5e'];
+    const o=objectifsParFaute[faute]||objectifsParFaute.autre;
     return [
-        { text: pick(b.comprendre), obj: o.obj1, duree: pick(durees) },
-        { text: pick(b.reparer),    obj: o.obj2, duree: pick(durees) },
-        { text: pick(b.progresser), obj: o.obj3, duree: pick(durees) }
+        {text:pick(b.comprendre),obj:o.obj1,duree:pick(durees)},
+        {text:pick(b.reparer),   obj:o.obj2,duree:pick(durees)},
+        {text:pick(b.progresser),obj:o.obj3,duree:pick(durees)}
     ];
 }
 
-/* ===================== CARD UPDATE ===================== */
-function applyCard(idx, data, matiere) {
-    const n = idx + 1;
-    document.getElementById(`pun${n}`).textContent = data.text;
-    document.getElementById(`details${n}`).innerHTML = `<strong>Objectif pédagogique :</strong> ${data.obj}`;
-    document.getElementById(`duree${n}`).textContent = `⏱️ ${data.duree}`;
-    document.getElementById(`matiere${n}`).textContent = nomsMatiere[matiere];
-    const carte = document.getElementById(`carte${n}`);
-    carte.classList.remove('animated');
-    void carte.offsetWidth;
-    carte.classList.add('animated');
+function applyCard(idx,data,matiere){
+    const n=idx+1;
+    document.getElementById(`pun${n}`).textContent=data.text;
+    document.getElementById(`obj${n}`).innerHTML=`<strong>Objectif pédagogique :</strong> ${data.obj}`;
+    document.getElementById(`dur${n}`).textContent=`⏱️ ${data.duree}`;
+    document.getElementById(`mt${n}`).textContent=nomsMatiere[matiere];
+    const el=document.getElementById(`carte${n}`);
+    el.classList.remove('anim'); void el.offsetWidth; el.classList.add('anim');
 }
 
-/* ===================== AI GENERATION ===================== */
-async function generateWithAI(matiere, faute, niveau, context, cardsToGen = [0,1,2]) {
-    const cats = ['Comprendre & Analyser', 'Réparer & Contribuer', 'Progresser & S\'engager'];
-    const objKeys = ['obj1', 'obj2', 'obj3'];
-    const o = objectifsParFaute[faute] || objectifsParFaute.autre;
+/* ===== AI GENERATION ===== */
+async function generateWithAI(matiere,faute,classe,context,indices=[0,1,2]){
+    const cats=['Comprendre & Analyser','Réparer & Contribuer','Progresser & S\'engager'];
+    const o=objectifsParFaute[faute]||objectifsParFaute.autre;
+    const prenom=prenomEleve.value.trim()||'l\'élève';
+    const prompt=`Tu es un professeur expert en pédagogie constructive au collège.
+Génère ${indices.length} travaux réparateurs individualisés.
 
-    const prompt = `Tu es un professeur expert en pédagogie constructive. Génère exactement ${cardsToGen.length} travaux réparateurs pour un élève.
+Élève : ${prenom} — Classe : ${classe} — Matière : ${nomsMatiere[matiere]} — Situation : ${nomsFaute[faute]}
+Contexte : ${context||'aucun'}
+Catégories : ${indices.map(i=>cats[i]).join(', ')}
+Objectifs correspondants : ${indices.map(i=>[o.obj1,o.obj2,o.obj3][i]).join(' | ')}
 
-Contexte :
-- Matière : ${nomsMatiere[matiere]}
-- Niveau : ${nomsNiveau[niveau]}
-- Situation : ${nomsFaute[faute]}
-- Contexte supplémentaire : ${context || 'aucun'}
+Pour chaque travail : description précise 2-3 phrases adaptée au niveau ${classe}, objectif 1 phrase, durée 30-45 min.
+Réponds UNIQUEMENT en JSON : [{"text":"...","obj":"...","duree":"35-40 min"}]`;
 
-Pour chaque travail, donne :
-- Une description précise et concrète du travail à faire (2-3 phrases, durée 30-45 min)
-- L'objectif pédagogique en 1 phrase
-- La durée estimée (entre 30 et 45 min)
+    const apiKey = apiKeyInput.value.trim() || savedApiKey;
+    if(!apiKey) throw new Error('Clé API manquante');
 
-Génère les travaux pour ces catégories : ${cardsToGen.map(i => cats[i]).join(', ')}
-
-Réponds UNIQUEMENT en JSON valide, format exact (tableau dans l'ordre des catégories demandées) :
-[
-  { "text": "...", "obj": "...", "duree": "35–40 min" }
-]
-
-Rien d'autre, aucun commentaire, aucun texte hors JSON.`;
-
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 1000,
-            messages: [{ role: "user", content: prompt }]
-        })
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "x-api-key": apiKey,
+            "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,
+            messages:[{role:"user",content:prompt}]})
     });
-
-    const data = await response.json();
-    const raw = data.content?.map(c => c.text || '').join('') || '';
-    const clean = raw.replace(/```json|```/g, '').trim();
-    return JSON.parse(clean);
+    const data=await res.json();
+    const raw=data.content?.map(c=>c.text||'').join('')||'';
+    return JSON.parse(raw.replace(/```json|```/g,'').trim());
 }
 
-/* ===================== GENERATE ALL ===================== */
-async function genererComplet() {
-    const matiere = matiereSelect.value;
-    const faute   = fauteSelect.value;
-    const niveau  = niveauSelect.value;
-    const context = contextInput.value.trim();
-
-    btnGenerer.disabled = true;
-    setStatus('⏳ Génération en cours…', true);
-
-    // Set loading shimmer on all cards
-    [1,2,3].forEach(n => document.getElementById(`carte${n}`).classList.add('loading'));
-
+/* ===== GENERATE ALL ===== */
+async function generer(){
+    const matiere=matiereSelect.value, faute=fauteSelect.value, classe=classeSelect.value;
+    btnGen.disabled=true; setStatus('⏳ Génération en cours…',true);
+    [1,2,3].forEach(n=>document.getElementById(`carte${n}`).classList.add('loading'));
     try {
-        let results;
-        if (aiMode) {
-            results = await generateWithAI(matiere, faute, niveau, context, [0,1,2]);
-        } else {
-            results = getLocalData(matiere, faute);
-        }
-
-        currentData = results;
-        results.forEach((d, i) => applyCard(i, d, matiere));
-        document.querySelectorAll('.carte').forEach(c => c.classList.toggle('ai-mode', aiMode));
+        let res;
+        if(aiMode) res=await generateWithAI(matiere,faute,classe,ctxInput.value.trim());
+        else res=getLocalData(matiere,faute,classe);
+        cards=res; res.forEach((d,i)=>applyCard(i,d,matiere));
+        document.querySelectorAll('.carte').forEach(c=>c.classList.toggle('ai-on',aiMode));
         updateStatus();
-    } catch(e) {
+    } catch(e){
         console.error(e);
-        // Fallback to local
-        const fallback = getLocalData(matiere, faute);
-        currentData = fallback;
-        fallback.forEach((d, i) => applyCard(i, d, matiere));
-        setStatus('⚠️ IA indisponible — données locales utilisées', false);
+        cards=getLocalData(matiere,faute,classe);
+        cards.forEach((d,i)=>applyCard(i,d,matiere));
+        setStatus('⚠️ IA indisponible — données locales utilisées',false);
     }
-
-    [1,2,3].forEach(n => document.getElementById(`carte${n}`).classList.remove('loading'));
-    btnGenerer.disabled = false;
+    [1,2,3].forEach(n=>document.getElementById(`carte${n}`).classList.remove('loading'));
+    btnGen.disabled=false;
 }
 
-/* ===================== REGEN SINGLE CARD ===================== */
-window.regenCard = async function(n) {
-    const idx = n - 1;
-    const matiere = matiereSelect.value;
-    const faute   = fauteSelect.value;
-    const niveau  = niveauSelect.value;
-    const context = contextInput.value.trim();
-    const btn = document.getElementById(`regen${n}`);
-    const carte = document.getElementById(`carte${n}`);
-
-    btn.classList.add('spinning');
-    carte.classList.add('loading');
-
+/* ===== REGEN SINGLE ===== */
+window.regenCard=async function(n){
+    const idx=n-1, matiere=matiereSelect.value, faute=fauteSelect.value, classe=classeSelect.value;
+    const btn=document.getElementById(`rb${n}`), carte=document.getElementById(`carte${n}`);
+    btn.classList.add('spinning'); carte.classList.add('loading');
     try {
-        let result;
-        if (aiMode) {
-            const arr = await generateWithAI(matiere, faute, niveau, context, [idx]);
-            result = arr[0];
-        } else {
-            const b = banque[matiere] || banque.autre;
-            const o = objectifsParFaute[faute] || objectifsParFaute.autre;
-            const keys = ['comprendre', 'reparer', 'progresser'];
-            const objKeys = ['obj1', 'obj2', 'obj3'];
-            result = { text: pick(b[keys[idx]]), obj: o[objKeys[idx]], duree: pick(durees) };
+        let r;
+        if(aiMode){const arr=await generateWithAI(matiere,faute,classe,ctxInput.value.trim(),[idx]);r=arr[0];}
+        else{
+            const b=(banque[matiere]?.[classe])||banque.autre[classe]||banque.autre['5e'];
+            const o=objectifsParFaute[faute]||objectifsParFaute.autre;
+            const k=['comprendre','reparer','progresser'][idx];
+            const oj=['obj1','obj2','obj3'][idx];
+            r={text:pick(b[k]),obj:o[oj],duree:pick(durees)};
         }
-        currentData[idx] = result;
-        applyCard(idx, result, matiere);
-    } catch(e) {
-        console.error(e);
-    }
-
-    btn.classList.remove('spinning');
-    carte.classList.remove('loading');
+        cards[idx]=r; applyCard(idx,r,matiere);
+    } catch(e){console.error(e);}
+    btn.classList.remove('spinning'); carte.classList.remove('loading');
 };
 
-/* ===================== COPY CARD ===================== */
-window.copyCard = function(n) {
-    const cats = ['🔍 Comprendre & Analyser', '🛠️ Réparer & Contribuer', '📈 Progresser & S\'engager'];
-    const text = document.getElementById(`pun${n}`).textContent;
-    const obj  = document.getElementById(`details${n}`).textContent;
-    const duree = document.getElementById(`duree${n}`).textContent;
-    const matiere = document.getElementById(`matiere${n}`).textContent;
-
-    const content = `${cats[n-1]}\n${matiere}\n\n${text}\n\n${obj}\n${duree}`;
-
-    navigator.clipboard.writeText(content).then(() => {
-        const btn = document.querySelector(`#carte${n} .icon-btn`);
-        btn.textContent = '✅';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 1500);
+/* ===== COPY ===== */
+window.copyCard=function(n){
+    const cats=['🔍 Comprendre & Analyser','🛠️ Réparer & Contribuer','📈 Progresser & S\'engager'];
+    const txt=`${cats[n-1]}\n${document.getElementById(`mt${n}`).textContent}\n\n${document.getElementById(`pun${n}`).textContent}\n\n${document.getElementById(`obj${n}`).textContent}\n${document.getElementById(`dur${n}`).textContent}`;
+    navigator.clipboard.writeText(txt).then(()=>{
+        const b=document.querySelector(`#carte${n} .ibtn`);
+        b.textContent='✅'; b.classList.add('ok');
+        setTimeout(()=>{b.textContent='📋';b.classList.remove('ok');},1500);
     });
 };
 
-/* ===================== RESET ===================== */
-btnRemettre.addEventListener('click', () => {
-    matiereSelect.value = 'maths';
-    fauteSelect.value = 'bavardage';
-    contextInput.value = '';
-    if (aiMode) { aiMode = false; togglePill.classList.remove('on'); contextZone.classList.remove('visible'); }
-    genererComplet();
+/* ===== PRINT ===== */
+function fmtDate(v){if(!v)return'—';const[y,m,d]=v.split('-');return`${d}/${m}/${y}`;}
+
+function buildSheet(){
+    const prenom=prenomEleve.value.trim()||'——';
+    const nom=nomEleve.value.trim()||'——';
+    const classe=classeSelect.value, matiere=matiereSelect.value, faute=fauteSelect.value;
+    const prof=profField.value.trim()||'——';
+    document.getElementById('ps-nom').textContent=`${prenom} ${nom}`;
+    document.getElementById('ps-classe').textContent=classe;
+    document.getElementById('ps-matiere').textContent=nomsMatiere[matiere];
+    document.getElementById('ps-faute').textContent=nomsFaute[faute];
+    document.getElementById('ps-prof').textContent=prof;
+    document.getElementById('ps-rendu').textContent=fmtDate(dateRendu.value);
+    document.getElementById('ps-date-hd').innerHTML=`Fait le : <strong>${fmtDate(dateField.value)}</strong>`;
+    document.getElementById('ps-etab-sub').textContent=`Fiche individuelle · ${classe} · ${nomsMatiere[matiere]}`;
+    document.getElementById('ps-intro').textContent=introParFaute[faute]?.(prenom,classe)||'';
+    [1,2,3].forEach(n=>{
+        document.getElementById(`ps-pun${n}`).textContent=document.getElementById(`pun${n}`).textContent;
+        document.getElementById(`ps-obj${n}`).innerHTML=document.getElementById(`obj${n}`).innerHTML;
+        document.getElementById(`ps-dur${n}`).textContent=document.getElementById(`dur${n}`).textContent;
+    });
+    document.getElementById('ps-footer').textContent=`Fiche générée le ${fmtDate(dateField.value)} · ${prof} · ${classe} · ${nomsMatiere[matiere]} — Démarche éducative constructive.`;
+}
+
+btnPrint.addEventListener('click',()=>{buildSheet();window.print();});
+
+/* ===== RESET ===== */
+btnRst.addEventListener('click',()=>{
+    matiereSelect.value='maths'; fauteSelect.value='bavardage'; classeSelect.value='5e';
+    prenomEleve.value=''; nomEleve.value=''; profField.value=''; ctxInput.value='';
+    dateField.value=new Date().toISOString().split('T')[0];
+    const r=new Date();r.setDate(r.getDate()+7);dateRendu.value=r.toISOString().split('T')[0];
+    if(aiMode){aiMode=false;pillEl.classList.remove('on');apikeyZone.classList.remove('show');ctxZone.classList.remove('show');}
+    generer();
 });
 
-/* ===================== INIT ===================== */
-btnGenerer.addEventListener('click', genererComplet);
-window.addEventListener('load', () => { updateStatus(); genererComplet(); });
+/* ===== INIT ===== */
+btnGen.addEventListener('click',generer);
+window.addEventListener('load',()=>{updateStatus();generer();});
 
 })();
 </script>
